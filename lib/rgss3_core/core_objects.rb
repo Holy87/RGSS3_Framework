@@ -52,7 +52,7 @@ class Bitmap
 # @param [String] str
 # @param [Integer] align
   def draw_text(x, y, width, height, str, align = 0);end
-# @return [Integer]
+# @return [Rect]
 # @param [String] str
   def text_size(str);end
 end
@@ -247,8 +247,11 @@ class Tone
   # @param [Integer] blue
   # @param [Integer] gray
   def initialize(red, green, blue, gray = 0);end
-  # @param [Tone] tone
-  def set(tone); end
+  # @param [Integer] red
+  # @param [Integer] green
+  # @param [Integer] blue
+  # @param [Integer] gray
+  def set(red, green, blue, gray = 0); end
 end
 
 class Viewport
@@ -316,18 +319,19 @@ class Window
   attr_accessor :contents_opacity
   attr_accessor :openness
   attr_accessor :tone
-# @param [Integer] x
-# @param [Integer] y
-# @param [Integer] width
-# @param [Integer] height
+
+  # @param [Integer] x
+  # @param [Integer] y
+  # @param [Integer] width
+  # @param [Integer] height
   def initialize(x = 0, y = 0, width = 0, height = 0); end
   def dispose; end
   def disposed?; end
   def update; end
 
-# @param [Integer] x
-# @param [Integer] y
-# @param [Integer] width
+  # @param [Integer] x
+  # @param [Integer] y
+  # @param [Integer] width
   # @param [Integer] height
   def move(x, y, width, height); end
   def open?; end

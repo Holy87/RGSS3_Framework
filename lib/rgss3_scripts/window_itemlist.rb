@@ -1,57 +1,48 @@
 #==============================================================================
 # ** Window_ItemList
-#------------------------------------------------------------------------------
 #  This window displays a list of party items on the item screen.
 #==============================================================================
 
 class Window_ItemList < Window_Selectable
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize(x, y, width, height)
     super
     @category = :none
     @data = []
   end
-  #--------------------------------------------------------------------------
-  # * Set Category
-  #--------------------------------------------------------------------------
+
+  # Set Category
   def category=(category)
     return if @category == category
     @category = category
     refresh
     self.oy = 0
   end
-  #--------------------------------------------------------------------------
-  # * Get Digit Count
+
+  # Get Digit Count
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def col_max
     return 2
   end
-  #--------------------------------------------------------------------------
-  # * Get Number of Items
+
+  # Get Number of Items
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def item_max
     @data ? @data.size : 1
   end
-  #--------------------------------------------------------------------------
-  # * Get Item
+
+  # Get Item
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def item
     @data && index >= 0 ? @data[index] : nil
   end
-  #--------------------------------------------------------------------------
-  # * Get Activation State of Selection Item
-  #--------------------------------------------------------------------------
+
+  # Get Activation State of Selection Item
   def current_item_enabled?
     enable?(@data[index])
   end
-  #--------------------------------------------------------------------------
-  # * Include in Item List?
-  #--------------------------------------------------------------------------
+
+  # Include in Item List?
   def include?(item)
     case @category
     when :item
@@ -66,28 +57,24 @@ class Window_ItemList < Window_Selectable
       false
     end
   end
-  #--------------------------------------------------------------------------
-  # * Display in Enabled State?
-  #--------------------------------------------------------------------------
+
+  # Display in Enabled State?
   def enable?(item)
     $game_party.usable?(item)
   end
-  #--------------------------------------------------------------------------
-  # * Create Item List
-  #--------------------------------------------------------------------------
+
+  # Create Item List
   def make_item_list
-    @data = $game_party.all_items.select {|item| include?(item) }
+    @data = $game_party.all_items.select {|item| include?(item)}
     @data.push(nil) if include?(nil)
   end
-  #--------------------------------------------------------------------------
-  # * Restore Previous Selection Position
-  #--------------------------------------------------------------------------
+
+  # Restore Previous Selection Position
   def select_last
     select(@data.index($game_party.last_item.object) || 0)
   end
-  #--------------------------------------------------------------------------
-  # * Draw Item
-  #--------------------------------------------------------------------------
+
+  # Draw Item
   def draw_item(index)
     item = @data[index]
     if item
@@ -97,21 +84,18 @@ class Window_ItemList < Window_Selectable
       draw_item_number(rect, item)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Draw Number of Items
-  #--------------------------------------------------------------------------
+
+  # Draw Number of Items
   def draw_item_number(rect, item)
     draw_text(rect, sprintf(":%2d", $game_party.item_number(item)), 2)
   end
-  #--------------------------------------------------------------------------
-  # * Update Help Text
-  #--------------------------------------------------------------------------
+
+  # Update Help Text
   def update_help
     @help_window.set_item(item)
   end
-  #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
+
+  # Refresh
   def refresh
     make_item_list
     create_contents

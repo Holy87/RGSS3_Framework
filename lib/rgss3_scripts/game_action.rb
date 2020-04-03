@@ -1,271 +1,157 @@
 #==============================================================================
 # ** Game_Action
-#------------------------------------------------------------------------------
 #  This class handles battle actions. This class is used within the
 # Game_Battler class.
 #==============================================================================
 
 class Game_Action
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [Game_Battler] subject
-  # @attr [Game_BaseItem] item
-  # @attr [Integer] target_index
-  attr_reader   :subject                  # action subject
-  attr_reader   :forcing                  # forcing flag for battle action
-  attr_reader   :item                     # skill/item
-  attr_accessor :target_index             # target index
-  attr_reader   :value                    # evaluation value for auto battle
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Public Instance Variables
+  # @return [Game_Battler] action subject
+  attr_reader :subject
+  # forcing flag for battle action
+  attr_reader :forcing
+  # @return [Game_BaseItem] skill/item
+  attr_reader :item
+  # @return [Integer] the target index
+  attr_accessor :target_index # target index
+  # @return [Integer] evaluation value for auto battle
+  attr_reader :value
+
+  # Object Initialization
   # @param [Game_Battler] subject
   # @param [Boolean] forcing
   def initialize(subject, forcing = false)
-    @subject = subject
-    @forcing = forcing
-    clear
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Clear
-  #--------------------------------------------------------------------------
+
+  # Clear
   def clear
-    @item = Game_BaseItem.new
-    @target_index = -1
-    @value = 0
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Allied Units
-  #--------------------------------------------------------------------------
+
+  # Get Allied Units
+  # @return [Game_Troop,Game_Party]
   def friends_unit
-    subject.friends_unit
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Enemy Units
-  #--------------------------------------------------------------------------
+
+  # Get Enemy Units
+  # @return [Game_Troop,Game_Party]
   def opponents_unit
-    subject.opponents_unit
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Set Battle Action of Enemy Character
-  #     action : RPG::Enemy::Action
-  #--------------------------------------------------------------------------
+
+  # Set Battle Action of Enemy Character
   # @param [RPG::Enemy::Action] action
   def set_enemy_action(action)
-    if action
-      set_skill(action.skill_id)
-    else
-      clear
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Set Normal Attack
-  #--------------------------------------------------------------------------
+
+  # Set Normal Attack
   def set_attack
-    set_skill(subject.attack_skill_id)
-    self
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Set Guard
-  #--------------------------------------------------------------------------
+
+  # Set Guard
   def set_guard
-    set_skill(subject.guard_skill_id)
-    self
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Set Skill
-  #--------------------------------------------------------------------------
+
+  # Set Skill
   def set_skill(skill_id)
-    @item.object = $data_skills[skill_id]
-    self
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Set Item
-  #--------------------------------------------------------------------------
+
+  # Set Item
+  # @param [Integer] item_id
   def set_item(item_id)
-    @item.object = $data_items[item_id]
-    self
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Item Object
-  #--------------------------------------------------------------------------
+
+  # Get Item Object
   # @return [RPG::UsableItem]
   def item
-    @item.object
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Normal Attack Determination
-  #--------------------------------------------------------------------------
+
+  # Normal Attack Determination
+  # @return [Boolean]
   def attack?
-    item == $data_skills[subject.attack_skill_id]
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Random Target
-  #--------------------------------------------------------------------------
+
+  # Random Target
   def decide_random_target
-    if item.for_dead_friend?
-      target = friends_unit.random_dead_target
-    elsif item.for_friend?
-      target = friends_unit.random_target
-    else
-      target = opponents_unit.random_target
-    end
-    if target
-      @target_index = target.index
-    else
-      clear
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Set Confusion Action
-  #--------------------------------------------------------------------------
+
+  # Set Confusion Action
   def set_confusion
-    set_attack
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Action Preparation
-  #--------------------------------------------------------------------------
+
+  # Action Preparation
   def prepare
-    set_confusion if subject.confusion? && !forcing
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Determination if Action is Valid or Not
+
+  # Determination if Action is Valid or Not
   #    Assuming that an event command does not cause [Force Battle Action],
   #    if state limitations or lack of items, etc. make the planned action
   #    impossible, return false.
-  #--------------------------------------------------------------------------
   def valid?
-    (forcing && item) || subject.usable?(item)
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Calculate Action Speed
-  #--------------------------------------------------------------------------
+
+  # Calculate Action Speed
   # @return [Integer]
   def speed
-    speed = subject.agi + rand(5 + subject.agi / 4)
-    speed += item.speed if item
-    speed += subject.atk_speed if attack?
-    speed
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Create Target Array
-  #--------------------------------------------------------------------------
+
+  # Create Target Array
+  # @return [Array<Game_Battler>]
   def make_targets
-    if !forcing && subject.confusion?
-      [confusion_target]
-    elsif item.for_opponent?
-      targets_for_opponents
-    elsif item.for_friend?
-      targets_for_friends
-    else
-      []
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Target When Confused
-  #--------------------------------------------------------------------------
+
+  # Target When Confused
+  # @return [Game_Battler]
   def confusion_target
-    case subject.confusion_level
-    when 1
-      opponents_unit.random_target
-    when 2
-      if rand(2) == 0
-        opponents_unit.random_target
-      else
-        friends_unit.random_target
-      end
-    else
-      friends_unit.random_target
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Targets for Opponents
-  #--------------------------------------------------------------------------
+
+  # Targets for Opponents
+  # @return [Array<Game_Battler>]
   def targets_for_opponents
-    if item.for_random?
-      Array.new(item.number_of_targets) { opponents_unit.random_target }
-    elsif item.for_one?
-      num = 1 + (attack? ? subject.atk_times_add.to_i : 0)
-      if @target_index < 0
-        [opponents_unit.random_target] * num
-      else
-        [opponents_unit.smooth_target(@target_index)] * num
-      end
-    else
-      opponents_unit.alive_members
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Targets for Allies
-  #--------------------------------------------------------------------------
+
+  # Targets for Allies
+  # @return [Array<Game_Battler>]
   def targets_for_friends
-    if item.for_user?
-      [subject]
-    elsif item.for_dead_friend?
-      if item.for_one?
-        [friends_unit.smooth_dead_target(@target_index)]
-      else
-        friends_unit.dead_members
-      end
-    elsif item.for_friend?
-      if item.for_one?
-        [friends_unit.smooth_target(@target_index)]
-      else
-        friends_unit.alive_members
-      end
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Evaluate Value of Action (for Auto Battle)
+
+  # Evaluate Value of Action (for Auto Battle)
   #    @value and @target_index are automatically set.
-  #--------------------------------------------------------------------------
   def evaluate
-    @value = 0
-    evaluate_item if valid?
-    @value += rand if @value > 0
-    self
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Evaluate Skill/Item
-  #--------------------------------------------------------------------------
+
+  # Evaluate Skill/Item
   def evaluate_item
-    item_target_candidates.each do |target|
-      value = evaluate_item_with_target(target)
-      if item.for_all?
-        @value += value
-      elsif value > @value
-        @value = value
-        @target_index = target.index
-      end
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Use Target Candidates for Skills/Items
-  #--------------------------------------------------------------------------
+
+  # Get Use Target Candidates for Skills/Items
   def item_target_candidates
-    if item.for_opponent?
-      opponents_unit.alive_members
-    elsif item.for_user?
-      [subject]
-    elsif item.for_dead_friend?
-      friends_unit.dead_members
-    else
-      friends_unit.alive_members
-    end
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Evaluate Skill/Item (Target Specification)
-  #--------------------------------------------------------------------------
+
+  # Evaluate Skill/Item (Target Specification)
   # @return [Float]
   def evaluate_item_with_target(target)
-    target.result.clear
-    target.make_damage_value(subject, item)
-    if item.for_opponent?
-      return target.result.hp_damage.to_f / [target.hp, 1].max
-    else
-      recovery = [-target.result.hp_damage, target.mhp - target.hp].min
-      return recovery.to_f / target.mhp
-    end
+    fail NotImplementedError
   end
 end

@@ -1,14 +1,11 @@
 #==============================================================================
 # ** Window_BattleSkill
-#------------------------------------------------------------------------------
 #  This window is for selecting skills to use in the battle window.
 #==============================================================================
 
 class Window_BattleSkill < Window_SkillList
-  #--------------------------------------------------------------------------
-  # * Object Initialization
+  # Object Initialization
   #     info_viewport : Viewport for displaying information
-  #--------------------------------------------------------------------------
   # @param [Window_Help] help_window
   # @param [Viewport] info_viewport
   def initialize(help_window, info_viewport)
@@ -18,17 +15,15 @@ class Window_BattleSkill < Window_SkillList
     @help_window = help_window
     @info_viewport = info_viewport
   end
-  #--------------------------------------------------------------------------
-  # * Show Window
-  #--------------------------------------------------------------------------
+
+  # Show Window
   def show
     select_last
     @help_window.show
     super
   end
-  #--------------------------------------------------------------------------
-  # * Hide Window
-  #--------------------------------------------------------------------------
+
+  # Hide Window
   def hide
     @help_window.hide
     super

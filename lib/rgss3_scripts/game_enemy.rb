@@ -1,24 +1,20 @@
 #==============================================================================
 # ** Game_Enemy
-#------------------------------------------------------------------------------
 #  This class handles enemies. It used within the Game_Troop class 
 # ($game_troop).
 #==============================================================================
 
 class Game_Enemy < Game_Battler
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_reader   :index                    # index in troop
-  attr_reader   :enemy_id                 # enemy ID
-  attr_reader   :original_name            # original name
-  attr_accessor :letter                   # letters to be attached to the name
-  attr_accessor :plural                   # multiple appearance flag
-  attr_accessor :screen_x                 # battle screen X coordinate
-  attr_accessor :screen_y                 # battle screen Y coordinate
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Public Instance Variables
+  attr_reader :index # index in troop
+  attr_reader :enemy_id # enemy ID
+  # @return [String]
+  attr_reader :original_name # original name
+  attr_accessor :letter # letters to be attached to the name
+  attr_accessor :plural # multiple appearance flag
+  attr_accessor :screen_x # battle screen X coordinate
+  attr_accessor :screen_y # battle screen Y coordinate
+  # Object Initialization
   def initialize(index, enemy_id)
     super()
     @index = index
@@ -34,66 +30,57 @@ class Game_Enemy < Game_Battler
     @hp = mhp
     @mp = mmp
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Enemy
-  #--------------------------------------------------------------------------
+
+  # Determine if Enemy
   def enemy?
     return true
   end
-  #--------------------------------------------------------------------------
-  # * Get Allied Units
-  #--------------------------------------------------------------------------
+
+  # Get Allied Units
   # @return [Game_Troop]
   def friends_unit
     $game_troop
   end
-  #--------------------------------------------------------------------------
-  # * Get Enemy Units
-  #--------------------------------------------------------------------------
+
+  # Get Enemy Units
   # @return [Game_Party]
   def opponents_unit
     $game_party
   end
-  #--------------------------------------------------------------------------
-  # * Get Enemy Object
-  #--------------------------------------------------------------------------
+
+  # Get Enemy Object
+  # @return [RPG::Enemy]
   def enemy
     $data_enemies[@enemy_id]
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of All Objects Retaining Features
-  #--------------------------------------------------------------------------
+
+  # Get Array of All Objects Retaining Features
   def feature_objects
     super + [enemy]
   end
-  #--------------------------------------------------------------------------
-  # * Get Display Name
-  #--------------------------------------------------------------------------
+
+  # Get Display Name
   # @return [String]
   def name
     @original_name + (@plural ? letter : "")
   end
-  #--------------------------------------------------------------------------
-  # * Get Base Value of Parameter
-  #--------------------------------------------------------------------------
+
+  # Get Base Value of Parameter
   def param_base(param_id)
     enemy.params[param_id]
   end
-  #--------------------------------------------------------------------------
-  # * Get Experience
-  #--------------------------------------------------------------------------
+
+  # Get Experience
   def exp
     enemy.exp
   end
-  #--------------------------------------------------------------------------
-  # * Get Gold
-  #--------------------------------------------------------------------------
+
+  # Get Gold
   def gold
     enemy.gold
   end
-  #--------------------------------------------------------------------------
-  # * Create Array of Dropped Items
-  #--------------------------------------------------------------------------
+
+  # Create Array of Dropped Items
   # @return [Array<RPG::BaseItem>]
   def make_drop_items
     enemy.drop_items.inject([]) do |r, di|
@@ -104,15 +91,13 @@ class Game_Enemy < Game_Battler
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * Get Multiplier for Dropped Item Acquisition Probability
-  #--------------------------------------------------------------------------
+
+  # Get Multiplier for Dropped Item Acquisition Probability
   def drop_item_rate
     $game_party.drop_item_double? ? 2 : 1
   end
-  #--------------------------------------------------------------------------
-  # * Get Item Object
-  #--------------------------------------------------------------------------
+
+  # Get Item Object
   # @param [Integer] kind
   # @param [Integer] data_id
   # @return [RPG::BaseItem]
@@ -122,28 +107,24 @@ class Game_Enemy < Game_Battler
     #return $data_armors [data_id] if kind == 3
     nil
   end
-  #--------------------------------------------------------------------------
-  # * Use Sprites?
-  #--------------------------------------------------------------------------
+
+  # Use Sprites?
   def use_sprite?
     return true
   end
-  #--------------------------------------------------------------------------
-  # * Get Battle Screen Z-Coordinate
-  #--------------------------------------------------------------------------
+
+  # Get Battle Screen Z-Coordinate
   def screen_z
     return 100
   end
-  #--------------------------------------------------------------------------
-  # * Execute Damage Effect
-  #--------------------------------------------------------------------------
+
+  # Execute Damage Effect
   def perform_damage_effect
     @sprite_effect_type = :blink
     Sound.play_enemy_damage
   end
-  #--------------------------------------------------------------------------
-  # * Execute Collapse Effect
-  #--------------------------------------------------------------------------
+
+  # Execute Collapse Effect
   def perform_collapse_effect
     case collapse_type
     when 0
@@ -156,9 +137,8 @@ class Game_Enemy < Game_Battler
       @sprite_effect_type = :instant_collapse
     end
   end
-  #--------------------------------------------------------------------------
-  # * Transform
-  #--------------------------------------------------------------------------
+
+  # Transform
   def transform(enemy_id)
     @enemy_id = enemy_id
     if enemy.name != @original_name
@@ -171,19 +151,18 @@ class Game_Enemy < Game_Battler
     refresh
     make_actions unless @actions.empty?
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met
+
+  # Determine if Action Conditions Are Met
   #     action : RPG::Enemy::Action
-  #--------------------------------------------------------------------------
   # @param [RPG::Enemy::Action] action
   def conditions_met?(action)
     method_table = {
-      1 => :conditions_met_turns?,
-      2 => :conditions_met_hp?,
-      3 => :conditions_met_mp?,
-      4 => :conditions_met_state?,
-      5 => :conditions_met_party_level?,
-      6 => :conditions_met_switch?,
+        1 => :conditions_met_turns?,
+        2 => :conditions_met_hp?,
+        3 => :conditions_met_mp?,
+        4 => :conditions_met_state?,
+        5 => :conditions_met_party_level?,
+        6 => :conditions_met_switch?,
     }
     method_name = method_table[action.condition_type]
     if method_name
@@ -192,9 +171,8 @@ class Game_Enemy < Game_Battler
       true
     end
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met [Turns]
-  #--------------------------------------------------------------------------
+
+  # Determine if Action Conditions Are Met [Turns]
   def conditions_met_turns?(param1, param2)
     n = $game_troop.turn_count
     if param2 == 0
@@ -203,53 +181,46 @@ class Game_Enemy < Game_Battler
       n > 0 && n >= param1 && n % param2 == param1 % param2
     end
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met [HP]
-  #--------------------------------------------------------------------------
+
+  # Determine if Action Conditions Are Met [HP]
   def conditions_met_hp?(param1, param2)
     hp_rate >= param1 && hp_rate <= param2
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met [MP]
-  #--------------------------------------------------------------------------
+
+  # Determine if Action Conditions Are Met [MP]
   def conditions_met_mp?(param1, param2)
     mp_rate >= param1 && mp_rate <= param2
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met [State]
-  #--------------------------------------------------------------------------
+
+  # Determine if Action Conditions Are Met [State]
   def conditions_met_state?(param1, param2)
     state?(param1)
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met [Party Level]
-  #--------------------------------------------------------------------------
+
+  # Determine if Action Conditions Are Met [Party Level]
   def conditions_met_party_level?(param1, param2)
     $game_party.highest_level >= param1
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Conditions Are Met [Switch]
-  #--------------------------------------------------------------------------
+
+  # Determine if Action Conditions Are Met [Switch]
   def conditions_met_switch?(param1, param2)
     $game_switches[param1]
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Action Is Valid in Current State
+
+  # Determine if Action Is Valid in Current State
   #     action : RPG::Enemy::Action
-  #--------------------------------------------------------------------------
   # @param [RPG::Enemy::Action] action
   def action_valid?(action)
     conditions_met?(action) && usable?($data_skills[action.skill_id])
   end
-  #--------------------------------------------------------------------------
-  # * Randomly Select Action
+
+  # Randomly Select Action
   #     action_list:  RPG::Enemy::Action array
   #     rating_zero:  Rating value to consider as zero
-  #--------------------------------------------------------------------------
   # @param [Array<RPG::Enemy::Action>] action_list
   # @param [Integer] rating_zero
   def select_enemy_action(action_list, rating_zero)
-    sum = action_list.inject(0) {|r, a| r += a.rating - rating_zero }
+    sum = action_list.inject(0) {|r, a| r += a.rating - rating_zero}
     return nil if sum <= 0
     value = rand(sum)
     action_list.each do |action|
@@ -257,17 +228,16 @@ class Game_Enemy < Game_Battler
       value -= action.rating - rating_zero
     end
   end
-  #--------------------------------------------------------------------------
-  # * Create Battle Action
-  #--------------------------------------------------------------------------
+
+  # Create Battle Action
   def make_actions
     super
     return if @actions.empty?
-    action_list = enemy.actions.select {|a| action_valid?(a) }
+    action_list = enemy.actions.select {|a| action_valid?(a)}
     return if action_list.empty?
-    rating_max = action_list.collect {|a| a.rating }.max
+    rating_max = action_list.collect {|a| a.rating}.max
     rating_zero = rating_max - 3
-    action_list.reject! {|a| a.rating <= rating_zero }
+    action_list.reject! {|a| a.rating <= rating_zero}
     @actions.each do |action|
       action.set_enemy_action(select_enemy_action(action_list, rating_zero))
     end

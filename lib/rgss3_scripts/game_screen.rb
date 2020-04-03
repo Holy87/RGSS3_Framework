@@ -1,38 +1,32 @@
 #==============================================================================
 # ** Game_Screen
-#------------------------------------------------------------------------------
 #  This class handles screen maintenance data, such as changes in color tone,
 # flashes, etc. It's used within the Game_Map and Game_Troop classes.
 #==============================================================================
 
 class Game_Screen
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [Integer] brightness
-  # @attr [Tone] tone
-  # @attr [Color] flash_color
-  # @attr [Game_Pictures] pictures
-  # @attr [Integer] shake
-  # @attr [Integer] weather_type
-  # @attr [Integer] weather_power
-  attr_reader   :brightness               # brightness
-  attr_reader   :tone                     # color tone
-  attr_reader   :flash_color              # flash color
-  attr_reader   :pictures                 # pictures
-  attr_reader   :shake                    # shake positioning
-  attr_reader   :weather_type             # weather type
-  attr_reader   :weather_power            # weather intensity (Float)
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Public Instance Variables
+  # @return [Integer] brightness
+  attr_reader :brightness # brightness
+  # @return [Tone] tone
+  attr_reader :tone # color tone
+  # @return [Color] flash_color
+  attr_reader :flash_color # flash color
+  # @return [Game_Pictures] pictures
+  attr_reader :pictures # pictures
+  # @return [Integer] shake
+  attr_reader :shake # shake positioning
+  # @return [Integer] weather_type
+  attr_reader :weather_type # weather type
+  # @return [Integer] weather_power
+  attr_reader :weather_power # weather intensity (Float)
+  # Object Initialization
   def initialize
     @pictures = Game_Pictures.new
     clear
   end
-  #--------------------------------------------------------------------------
-  # * Clear
-  #--------------------------------------------------------------------------
+
+  # Clear
   def clear
     clear_fade
     clear_tone
@@ -41,32 +35,28 @@ class Game_Screen
     clear_weather
     clear_pictures
   end
-  #--------------------------------------------------------------------------
-  # * Clear Fade In/Out
-  #--------------------------------------------------------------------------
+
+  # Clear Fade In/Out
   def clear_fade
     @brightness = 255
     @fadeout_duration = 0
     @fadein_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Clear Color Tone
-  #--------------------------------------------------------------------------
+
+  # Clear Color Tone
   def clear_tone
     @tone = Tone.new
     @tone_target = Tone.new
     @tone_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Clear Flash
-  #--------------------------------------------------------------------------
+
+  # Clear Flash
   def clear_flash
     @flash_color = Color.new
     @flash_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Clear Shake
-  #--------------------------------------------------------------------------
+
+  # Clear Shake
   def clear_shake
     @shake_power = 0
     @shake_speed = 0
@@ -74,38 +64,33 @@ class Game_Screen
     @shake_direction = 1
     @shake = 0
   end
-  #--------------------------------------------------------------------------
-  # * Clear Weather
-  #--------------------------------------------------------------------------
+
+  # Clear Weather
   def clear_weather
     @weather_type = :none
     @weather_power = 0
     @weather_power_target = 0
     @weather_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Clear Picture
-  #--------------------------------------------------------------------------
+
+  # Clear Picture
   def clear_pictures
-    @pictures.each {|picture| picture.erase }
+    @pictures.each {|picture| picture.erase}
   end
-  #--------------------------------------------------------------------------
-  # * Start Fadeout
-  #--------------------------------------------------------------------------
+
+  # Start Fadeout
   def start_fadeout(duration)
     @fadeout_duration = duration
     @fadein_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Start Fadein
-  #--------------------------------------------------------------------------
+
+  # Start Fadein
   def start_fadein(duration)
     @fadein_duration = duration
     @fadeout_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Start Changing Color Tone
-  #--------------------------------------------------------------------------
+
+  # Start Changing Color Tone
   # @param [Tone] tone
   # @param [Integer] duration
   def start_tone_change(tone, duration)
@@ -113,42 +98,38 @@ class Game_Screen
     @tone_duration = duration
     @tone = @tone_target.clone if @tone_duration == 0
   end
-  #--------------------------------------------------------------------------
-  # * Start Flashing
-  #--------------------------------------------------------------------------
+
+  # Start Flashing
   # @param [Tone] color
   # @param [Integer] duration
   def start_flash(color, duration)
     @flash_color = color.clone
     @flash_duration = duration
   end
-  #--------------------------------------------------------------------------
-  # * Start Shaking
+
+  # Start Shaking
   #     power: intensity
   #     speed: speed
-  #--------------------------------------------------------------------------
   def start_shake(power, speed, duration)
     @shake_power = power
     @shake_speed = speed
     @shake_duration = duration
   end
-  #--------------------------------------------------------------------------
-  # * Change Weather
+
+  # Change Weather
   #     type  : type (:none, :rain, :storm, :snow)
   #     power: intensity
   #    If weather type is none (:none), set @weather_power_target (target
   #    value of intensity) to 0 to represent gradual stopping of rain, but
   #    only in this case.
-  #--------------------------------------------------------------------------
   def change_weather(type, power, duration)
     @weather_type = type if type != :none || duration == 0
     @weather_power_target = type == :none ? 0.0 : power.to_f
     @weather_duration = duration
     @weather_power = @weather_power_target if duration == 0
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     update_fadeout
     update_fadein
@@ -158,9 +139,8 @@ class Game_Screen
     update_weather
     update_pictures
   end
-  #--------------------------------------------------------------------------
-  # * Update Fadeout
-  #--------------------------------------------------------------------------
+
+  # Update Fadeout
   def update_fadeout
     if @fadeout_duration > 0
       d = @fadeout_duration
@@ -168,9 +148,8 @@ class Game_Screen
       @fadeout_duration -= 1
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Fadein
-  #--------------------------------------------------------------------------
+
+  # Update Fadein
   def update_fadein
     if @fadein_duration > 0
       d = @fadein_duration
@@ -178,9 +157,8 @@ class Game_Screen
       @fadein_duration -= 1
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Tone
-  #--------------------------------------------------------------------------
+
+  # Update Tone
   def update_tone
     if @tone_duration > 0
       d = @tone_duration
@@ -191,9 +169,8 @@ class Game_Screen
       @tone_duration -= 1
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Flash
-  #--------------------------------------------------------------------------
+
+  # Update Flash
   def update_flash
     if @flash_duration > 0
       d = @flash_duration
@@ -201,9 +178,8 @@ class Game_Screen
       @flash_duration -= 1
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Shake
-  #--------------------------------------------------------------------------
+
+  # Update Shake
   def update_shake
     if @shake_duration > 0 || @shake != 0
       delta = (@shake_power * @shake_speed * @shake_direction) / 10.0
@@ -213,13 +189,12 @@ class Game_Screen
         @shake += delta
       end
       @shake_direction = -1 if @shake > @shake_power * 2
-      @shake_direction = 1 if @shake < - @shake_power * 2
+      @shake_direction = 1 if @shake < -@shake_power * 2
       @shake_duration -= 1
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Weather
-  #--------------------------------------------------------------------------
+
+  # Update Weather
   def update_weather
     if @weather_duration > 0
       d = @weather_duration
@@ -230,16 +205,14 @@ class Game_Screen
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Pictures
-  #--------------------------------------------------------------------------
+
+  # Update Pictures
   def update_pictures
-    @pictures.each {|picture| picture.update }
+    @pictures.each {|picture| picture.update}
   end
-  #--------------------------------------------------------------------------
-  # * Start Flash (for Poison/Damage Floor)
-  #--------------------------------------------------------------------------
+
+  # Start Flash (for Poison/Damage Floor)
   def start_flash_for_damage
-    start_flash(Color.new(255,0,0,128), 8)
+    start_flash(Color.new(255, 0, 0, 128), 8)
   end
 end

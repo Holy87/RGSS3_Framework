@@ -1,115 +1,97 @@
 #==============================================================================
 # ** Game_Followers
-#------------------------------------------------------------------------------
 #  This is a wrapper for a follower array. This class is used internally for
 # the Game_Player class. 
 #==============================================================================
 
 class Game_Followers
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_accessor :visible                  # Player Followers ON?
-  #--------------------------------------------------------------------------
-  # * Object Initialization
+  # Public Instance Variables
+  attr_accessor :visible # Player Followers ON?
+  # Object Initialization
   #     leader:  Lead character
-  #--------------------------------------------------------------------------
   # @param [Game_Character] leader
   def initialize(leader)
     @visible = $data_system.opt_followers
-    @gathering = false                    # Gathering processing underway flag
+    @gathering = false # Gathering processing underway flag
     @data = []
     @data.push(Game_Follower.new(1, leader))
     (2...$game_party.max_battle_members).each do |index|
       @data.push(Game_Follower.new(index, @data[-1]))
     end
   end
-  #--------------------------------------------------------------------------
-  # * Get Followers
-  #--------------------------------------------------------------------------
+
+  # Get Followers
   # @return [Game_Follower]
   def [](index)
     @data[index]
   end
-  #--------------------------------------------------------------------------
-  # * Iterator
-  #--------------------------------------------------------------------------
+
+  # Iterator
   def each
-    @data.each {|follower| yield follower } if block_given?
+    @data.each {|follower| yield follower} if block_given?
   end
-  #--------------------------------------------------------------------------
-  # * Iterator (Reverse)
-  #--------------------------------------------------------------------------
+
+  # Iterator (Reverse)
   def reverse_each
-    @data.reverse.each {|follower| yield follower } if block_given?
+    @data.reverse.each {|follower| yield follower} if block_given?
   end
-  #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
+
+  # Refresh
   def refresh
-    each {|follower| follower.refresh }
+    each {|follower| follower.refresh}
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     if gathering?
       move unless moving? || moving?
       @gathering = false if gather?
     end
-    each {|follower| follower.update }
+    each {|follower| follower.update}
   end
-  #--------------------------------------------------------------------------
-  # * Movement
-  #--------------------------------------------------------------------------
+
+  # Movement
   def move
-    reverse_each {|follower| follower.chase_preceding_character }
+    reverse_each {|follower| follower.chase_preceding_character}
   end
-  #--------------------------------------------------------------------------
-  # * Synchronize
-  #--------------------------------------------------------------------------
+
+  # Synchronize
   def synchronize(x, y, d)
     each do |follower|
       follower.moveto(x, y)
       follower.set_direction(d)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Gather
-  #--------------------------------------------------------------------------
+
+  # Gather
   def gather
     @gathering = true
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Gathering
-  #--------------------------------------------------------------------------
+
+  # Determine if Gathering
   def gathering?
     @gathering
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of Displayed Followers
+
+  # Get Array of Displayed Followers
   #    "followers" is typo, but retained because of the compatibility.
-  #--------------------------------------------------------------------------
   # @return [Game_Follower]
   def visible_folloers
-    @data.select {|follower| follower.visible? }
+    @data.select {|follower| follower.visible?}
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Moving
-  #--------------------------------------------------------------------------
+
+  # Determine if Moving
   def moving?
-    visible_folloers.any? {|follower| follower.moving? }
+    visible_folloers.any? {|follower| follower.moving?}
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Gathered
-  #--------------------------------------------------------------------------
+
+  # Determine if Gathered
   def gather?
-    visible_folloers.all? {|follower| follower.gather? }
+    visible_folloers.all? {|follower| follower.gather?}
   end
-  #--------------------------------------------------------------------------
-  # * Detect Collision
-  #--------------------------------------------------------------------------
+
+  # Detect Collision
   def collide?(x, y)
-    visible_folloers.any? {|follower| follower.pos?(x, y) }
+    visible_folloers.any? {|follower| follower.pos?(x, y)}
   end
 end

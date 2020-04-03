@@ -1,23 +1,19 @@
 #==============================================================================
 # ** Window_ScrollText
-#------------------------------------------------------------------------------
 #  This window is for displaying scrolling text. No frame is displayed, but it
 # is handled as a window for convenience.
 #==============================================================================
 
 class Window_ScrollText < Window_Base
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize
     super(0, 0, Graphics.width, Graphics.height)
     self.opacity = 0
     self.arrows_visible = false
     hide
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     super
     if $game_message.scroll_mode
@@ -25,17 +21,15 @@ class Window_ScrollText < Window_Base
       start_message if !@text && $game_message.has_text?
     end
   end
-  #--------------------------------------------------------------------------
-  # * Start Message
-  #--------------------------------------------------------------------------
+
+  # Start Message
   def start_message
     @text = $game_message.all_text
     refresh
     show
   end
-  #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
+
+  # Refresh
   def refresh
     reset_font_settings
     update_all_text_height
@@ -43,9 +37,8 @@ class Window_ScrollText < Window_Base
     draw_text_ex(4, 0, @text)
     self.oy = @scroll_pos = -height
   end
-  #--------------------------------------------------------------------------
-  # * Update Height Needed to Draw All Text
-  #--------------------------------------------------------------------------
+
+  # Update Height Needed to Draw All Text
   def update_all_text_height
     @all_text_height = 1
     convert_escape_characters(@text).each_line do |line|
@@ -53,36 +46,31 @@ class Window_ScrollText < Window_Base
     end
     reset_font_settings
   end
-  #--------------------------------------------------------------------------
-  # * Calculate Height of Window Contents
-  #--------------------------------------------------------------------------
+
+  # Calculate Height of Window Contents
   def contents_height
     @all_text_height ? @all_text_height : super
   end
-  #--------------------------------------------------------------------------
-  # * Update Message
-  #--------------------------------------------------------------------------
+
+  # Update Message
   def update_message
     @scroll_pos += scroll_speed
     self.oy = @scroll_pos
     terminate_message if @scroll_pos >= contents.height
   end
-  #--------------------------------------------------------------------------
-  # * Get Scroll Speed
+
+  # Get Scroll Speed
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def scroll_speed
     $game_message.scroll_speed * (show_fast? ? 1.0 : 0.5)
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Fast Forward
-  #--------------------------------------------------------------------------
+
+  # Determine if Fast Forward
   def show_fast?
     !$game_message.scroll_no_fast && (Input.press?(:A) || Input.press?(:C))
   end
-  #--------------------------------------------------------------------------
-  # * End Message
-  #--------------------------------------------------------------------------
+
+  # End Message
   def terminate_message
     @text = nil
     $game_message.clear

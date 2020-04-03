@@ -1,49 +1,40 @@
 #==============================================================================
 # ** Sprite_Base
-#------------------------------------------------------------------------------
 #  A sprite class with animation display processing added.
 #==============================================================================
 
 class Sprite_Base < Sprite
-  #--------------------------------------------------------------------------
-  # * Class Variable
-  #--------------------------------------------------------------------------
+  # Class Variable
   @@ani_checker = []
   @@ani_spr_checker = []
   @@_reference_count = {}
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize(viewport = nil)
     super(viewport)
-    @use_sprite = true        # Sprite use flag
-    @ani_duration = 0         # Remaining time of animation
+    @use_sprite = true # Sprite use flag
+    @ani_duration = 0 # Remaining time of animation
   end
-  #--------------------------------------------------------------------------
-  # * Free
-  #--------------------------------------------------------------------------
+
+  # Free
   def dispose
     super
     dispose_animation
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     super
     update_animation
     @@ani_checker.clear
     @@ani_spr_checker.clear
   end
-  #--------------------------------------------------------------------------
-  # * Determine if animation is being displayed
-  #--------------------------------------------------------------------------
+
+  # Determine if animation is being displayed
   def animation?
     @animation != nil
   end
-  #--------------------------------------------------------------------------
-  # * Start Animation
-  #--------------------------------------------------------------------------
+
+  # Start Animation
   def start_animation(animation, mirror = false)
     dispose_animation
     @animation = animation
@@ -56,15 +47,13 @@ class Sprite_Base < Sprite
       set_animation_origin
     end
   end
-  #--------------------------------------------------------------------------
-  # * Set Animation Speed
-  #--------------------------------------------------------------------------
+
+  # Set Animation Speed
   def set_animation_rate
-    @ani_rate = 4     # Fixed value by default
+    @ani_rate = 4 # Fixed value by default
   end
-  #--------------------------------------------------------------------------
-  # * Read (Load) Animation Graphics
-  #--------------------------------------------------------------------------
+
+  # Read (Load) Animation Graphics
   def load_animation_bitmap
     animation1_name = @animation.animation1_name
     animation1_hue = @animation.animation1_hue
@@ -84,9 +73,8 @@ class Sprite_Base < Sprite
     end
     Graphics.frame_reset
   end
-  #--------------------------------------------------------------------------
-  # * Create Animation Spirtes
-  #--------------------------------------------------------------------------
+
+  # Create Animation Spirtes
   def make_animation_sprites
     @ani_sprites = []
     if @use_sprite && !@@ani_spr_checker.include?(@animation)
@@ -104,9 +92,8 @@ class Sprite_Base < Sprite
       @@ani_checker.push(@animation)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Set Animation Origin
-  #--------------------------------------------------------------------------
+
+  # Set Animation Origin
   def set_animation_origin
     if @animation.position == 3
       if viewport == nil
@@ -126,9 +113,8 @@ class Sprite_Base < Sprite
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * Free Animation
-  #--------------------------------------------------------------------------
+
+  # Free Animation
   def dispose_animation
     if @ani_bitmap1
       @@_reference_count[@ani_bitmap1] -= 1
@@ -143,16 +129,15 @@ class Sprite_Base < Sprite
       end
     end
     if @ani_sprites
-      @ani_sprites.each {|sprite| sprite.dispose }
+      @ani_sprites.each {|sprite| sprite.dispose}
       @ani_sprites = nil
       @animation = nil
     end
     @ani_bitmap1 = nil
     @ani_bitmap2 = nil
   end
-  #--------------------------------------------------------------------------
-  # * Update Animation
-  #--------------------------------------------------------------------------
+
+  # Update Animation
   def update_animation
     return unless animation?
     @ani_duration -= 1
@@ -169,16 +154,14 @@ class Sprite_Base < Sprite
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * End Animation
-  #--------------------------------------------------------------------------
+
+  # End Animation
   def end_animation
     dispose_animation
   end
-  #--------------------------------------------------------------------------
-  # * Set Animation Sprite
+
+  # Set Animation Sprite
   #     frame : Frame data (RPG::Animation::Frame)
-  #--------------------------------------------------------------------------
   def animation_set_sprites(frame)
     cell_data = frame.cell_data
     @ani_sprites.each_with_index do |sprite, i|
@@ -191,7 +174,7 @@ class Sprite_Base < Sprite
       sprite.bitmap = pattern < 100 ? @ani_bitmap1 : @ani_bitmap2
       sprite.visible = true
       sprite.src_rect.set(pattern % 5 * 192,
-        pattern % 100 / 5 * 192, 192, 192)
+                          pattern % 100 / 5 * 192, 192, 192)
       if @ani_mirror
         sprite.x = @ani_ox - cell_data[i, 1]
         sprite.y = @ani_oy + cell_data[i, 2]
@@ -212,10 +195,9 @@ class Sprite_Base < Sprite
       sprite.blend_type = cell_data[i, 7]
     end
   end
-  #--------------------------------------------------------------------------
-  # * SE and Flash Timing Processing
+
+  # SE and Flash Timing Processing
   #     timing : Timing data (RPG::Animation::Timing)
-  #--------------------------------------------------------------------------
   def animation_process_timing(timing)
     timing.se.play unless @ani_duplicated
     case timing.flash_scope

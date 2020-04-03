@@ -1,38 +1,32 @@
 #==============================================================================
 # ** Window_EquipCommand
-#------------------------------------------------------------------------------
 #  This window is for selecting commands (change equipment/ultimate equipment
 # etc.) on the skill screen.
 #==============================================================================
 
 class Window_EquipCommand < Window_HorzCommand
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize(x, y, width)
     @window_width = width
     super(x, y)
   end
-  #--------------------------------------------------------------------------
-  # * Get Window Width
+
+  # Get Window Width
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def window_width
     @window_width
   end
-  #--------------------------------------------------------------------------
-  # * Get Digit Count
+
+  # Get Digit Count
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def col_max
     return 3
   end
-  #--------------------------------------------------------------------------
-  # * Create Command List
-  #--------------------------------------------------------------------------
+
+  # Create Command List
   def make_command_list
-    add_command(Vocab::equip2,   :equip)
+    add_command(Vocab::equip2, :equip)
     add_command(Vocab::optimize, :optimize)
-    add_command(Vocab::clear,    :clear)
+    add_command(Vocab::clear, :clear)
   end
 end

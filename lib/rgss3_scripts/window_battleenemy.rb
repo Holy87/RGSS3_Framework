@@ -1,15 +1,12 @@
 #==============================================================================
 # ** Window_BattleEnemy
-#------------------------------------------------------------------------------
 #  Window for selecting the enemy who is the action target on the battle
 # screen.
 #==============================================================================
 
 class Window_BattleEnemy < Window_Selectable
-  #--------------------------------------------------------------------------
-  # * Object Initialization
+  # Object Initialization
   #     info_viewport : Viewport for displaying information
-  #--------------------------------------------------------------------------
   # @param [Viewport] info_viewport
   def initialize(info_viewport)
     super(0, info_viewport.rect.y, window_width, fitting_height(4))
@@ -17,45 +14,39 @@ class Window_BattleEnemy < Window_Selectable
     self.visible = false
     @info_viewport = info_viewport
   end
-  #--------------------------------------------------------------------------
-  # * Get Window Width
-  #--------------------------------------------------------------------------
+
+  # Get Window Width
   # @return [Integer]
   def window_width
     Graphics.width - 128
   end
-  #--------------------------------------------------------------------------
-  # * Get Digit Count
+
+  # Get Digit Count
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def col_max
     return 2
   end
-  #--------------------------------------------------------------------------
-  # * Get Number of Items
+
+  # Get Number of Items
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def item_max
     $game_troop.alive_members.size
   end
-  #--------------------------------------------------------------------------
-  # * Get Enemy Object
+
+  # Get Enemy Object
   # @return [Game_Enemy]
-  #--------------------------------------------------------------------------
   def enemy
     $game_troop.alive_members[@index]
   end
-  #--------------------------------------------------------------------------
-  # * Draw Item
-  #--------------------------------------------------------------------------
+
+  # Draw Item
   def draw_item(index)
     change_color(normal_color)
     name = $game_troop.alive_members[index].name
     draw_text(item_rect_for_text(index), name)
   end
-  #--------------------------------------------------------------------------
-  # * Show Window
-  #--------------------------------------------------------------------------
+
+  # Show Window
   def show
     if @info_viewport
       width_remain = Graphics.width - width
@@ -65,9 +56,8 @@ class Window_BattleEnemy < Window_Selectable
     end
     super
   end
-  #--------------------------------------------------------------------------
-  # * Hide Window
-  #--------------------------------------------------------------------------
+
+  # Hide Window
   def hide
     @info_viewport.rect.width = Graphics.width if @info_viewport
     super

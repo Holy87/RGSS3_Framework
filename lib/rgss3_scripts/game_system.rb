@@ -1,27 +1,22 @@
 #==============================================================================
 # ** Game_System
-#------------------------------------------------------------------------------
 #  This class handles system data. It saves the disable state of saving and 
 # menus. Instances of this class are referenced by $game_system.
 #==============================================================================
 
 class Game_System
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [Integer] save_count
-  # @attr [Integer] battle_count
-  # @attr [Integer] version_id
-  attr_accessor :save_disabled            # save forbidden
-  attr_accessor :menu_disabled            # menu forbidden
-  attr_accessor :encounter_disabled       # encounter forbidden
-  attr_accessor :formation_disabled       # formation change forbidden
-  attr_accessor :battle_count             # battle count
-  attr_reader   :save_count               # save count
-  attr_reader   :version_id               # game version ID
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Public Instance Variables
+  attr_accessor :save_disabled # save forbidden
+  attr_accessor :menu_disabled # menu forbidden
+  attr_accessor :encounter_disabled # encounter forbidden
+  attr_accessor :formation_disabled # formation change forbidden
+  # @return [Integer] battle_count
+  attr_accessor :battle_count # battle count
+  # @return [Integer] save_count
+  attr_reader :save_count # save count
+  # @return [Integer] version_id
+  attr_reader :version_id # game version ID
+  # Object Initialization
   def initialize
     @save_disabled = false
     @menu_disabled = false
@@ -35,58 +30,50 @@ class Game_System
     @battle_end_me = nil
     @saved_bgm = nil
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Japanese Mode
-  #--------------------------------------------------------------------------
+
+  # Determine if Japanese Mode
   def japanese?
     #$data_system.japanese
     return false
   end
-  #--------------------------------------------------------------------------
-  # * Get Window Color
-  #--------------------------------------------------------------------------
+
+  # Get Window Color
   # @return [Tone]
   def window_tone
     @window_tone || $data_system.window_tone
   end
-  #--------------------------------------------------------------------------
-  # * Set Window Color
-  #--------------------------------------------------------------------------
+
+  # Set Window Color
   # @param [Tone] window_tone
   def window_tone=(window_tone)
     @window_tone = window_tone
   end
-  #--------------------------------------------------------------------------
-  # * Get Battle BGM
-  #--------------------------------------------------------------------------
+
+  # Get Battle BGM
   # @return [RPG::BGM]
   def battle_bgm
     @battle_bgm || $data_system.battle_bgm
   end
-  #--------------------------------------------------------------------------
-  # * Set Battle BGM
-  #--------------------------------------------------------------------------
+
+  # Set Battle BGM
   # @param [RPG::BGM] battle_bgm
   def battle_bgm=(battle_bgm)
     @battle_bgm = battle_bgm
   end
-  #--------------------------------------------------------------------------
-  # * Get Battle End ME
-  #--------------------------------------------------------------------------
+
+  # Get Battle End ME
   # @return [RPG::ME]
   def battle_end_me
     @battle_end_me || $data_system.battle_end_me
   end
-  #--------------------------------------------------------------------------
-  # * Set Battle End ME
-  #--------------------------------------------------------------------------
+
+  # Set Battle End ME
   # @param [RPG::ME] battle_end_me
   def battle_end_me=(battle_end_me)
     @battle_end_me = battle_end_me
   end
-  #--------------------------------------------------------------------------
-  # * Pre-Save Processing
-  #--------------------------------------------------------------------------
+
+  # Pre-Save Processing
   def on_before_save
     @save_count += 1
     @version_id = $data_system.version_id
@@ -94,24 +81,21 @@ class Game_System
     @bgm_on_save = RPG::BGM.last
     @bgs_on_save = RPG::BGS.last
   end
-  #--------------------------------------------------------------------------
-  # * Post-Load Processing
-  #--------------------------------------------------------------------------
+
+  # Post-Load Processing
   def on_after_load
     Graphics.frame_count = @frames_on_save
     @bgm_on_save.play
     @bgs_on_save.play
   end
-  #--------------------------------------------------------------------------
-  # * Get Play Time in Seconds
-  #--------------------------------------------------------------------------
+
+  # Get Play Time in Seconds
   # @return [Integer]
   def playtime
     Graphics.frame_count / Graphics.frame_rate
   end
-  #--------------------------------------------------------------------------
-  # * Get Play Time in Character String
-  #--------------------------------------------------------------------------
+
+  # Get Play Time in Character String
   # @return [String]
   def playtime_s
     hour = playtime / 60 / 60
@@ -119,16 +103,14 @@ class Game_System
     sec = playtime % 60
     sprintf("%02d:%02d:%02d", hour, min, sec)
   end
-  #--------------------------------------------------------------------------
-  # * Save BGM
-  #--------------------------------------------------------------------------
+
+  # Save BGM
   # @return [RPG::BGM]
   def save_bgm
     @saved_bgm = RPG::BGM.last
   end
-  #--------------------------------------------------------------------------
-  # * Resume BGM
-  #--------------------------------------------------------------------------
+
+  # Resume BGM
   def replay_bgm
     @saved_bgm.replay if @saved_bgm
   end

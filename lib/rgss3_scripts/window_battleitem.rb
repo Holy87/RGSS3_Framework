@@ -1,14 +1,11 @@
 #==============================================================================
 # ** Window_BattleItem
-#------------------------------------------------------------------------------
 #  This window is for selecting items to use in the battle window.
 #==============================================================================
 
 class Window_BattleItem < Window_ItemList
-  #--------------------------------------------------------------------------
-  # * Object Initialization
+  # Object Initialization
   #     info_viewport : Viewport for displaying information
-  #--------------------------------------------------------------------------
   # @param [Window_Help] help_window
   # @param [Viewport] info_viewport
   def initialize(help_window, info_viewport)
@@ -18,24 +15,21 @@ class Window_BattleItem < Window_ItemList
     @help_window = help_window
     @info_viewport = info_viewport
   end
-  #--------------------------------------------------------------------------
-  # * Include in Item List?
-  #--------------------------------------------------------------------------
+
+  # Include in Item List?
   # @param [RPG::UsableItem] item
   def include?(item)
     $game_party.usable?(item)
   end
-  #--------------------------------------------------------------------------
-  # * Show Window
-  #--------------------------------------------------------------------------
+
+  # Show Window
   def show
     select_last
     @help_window.show
     super
   end
-  #--------------------------------------------------------------------------
-  # * Hide Window
-  #--------------------------------------------------------------------------
+
+  # Hide Window
   def hide
     @help_window.hide
     super

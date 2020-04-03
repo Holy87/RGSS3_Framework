@@ -1,43 +1,36 @@
 #==============================================================================
 # ** Window_PartyCommand
-#------------------------------------------------------------------------------
 #  This window is used to select whether to fight or escape on the battle
 # screen.
 #==============================================================================
 
 class Window_PartyCommand < Window_Command
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize
     super(0, 0)
     self.openness = 0
     deactivate
   end
-  #--------------------------------------------------------------------------
-  # * Get Window Width
+
+  # Get Window Width
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def window_width
     return 128
   end
-  #--------------------------------------------------------------------------
-  # * Get Number of Lines to Show
+
+  # Get Number of Lines to Show
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def visible_line_number
     return 4
   end
-  #--------------------------------------------------------------------------
-  # * Create Command List
-  #--------------------------------------------------------------------------
+
+  # Create Command List
   def make_command_list
-    add_command(Vocab::fight,  :fight)
+    add_command(Vocab::fight, :fight)
     add_command(Vocab::escape, :escape, BattleManager.can_escape?)
   end
-  #--------------------------------------------------------------------------
-  # * Setup
-  #--------------------------------------------------------------------------
+
+  # Setup
   def setup
     clear_command_list
     make_command_list

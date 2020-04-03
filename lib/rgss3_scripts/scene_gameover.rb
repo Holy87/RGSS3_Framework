@@ -1,85 +1,72 @@
 #==============================================================================
 # ** Scene_Gameover
-#------------------------------------------------------------------------------
 #  This class performs game over screen processing.
 #==============================================================================
 
 class Scene_Gameover < Scene_Base
-  #--------------------------------------------------------------------------
-  # * Start Processing
-  #--------------------------------------------------------------------------
+  # Start Processing
   def start
     super
     play_gameover_music
     fadeout_frozen_graphics
     create_background
   end
-  #--------------------------------------------------------------------------
-  # * Termination Processing
-  #--------------------------------------------------------------------------
+
+  # Termination Processing
   def terminate
     super
     dispose_background
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     super
     goto_title if Input.trigger?(:C)
   end
-  #--------------------------------------------------------------------------
-  # * Execute Transition
-  #--------------------------------------------------------------------------
+
+  # Execute Transition
   def perform_transition
     Graphics.transition(fadein_speed)
   end
-  #--------------------------------------------------------------------------
-  # * Play Music on Game Over Screen
-  #--------------------------------------------------------------------------
+
+  # Play Music on Game Over Screen
   def play_gameover_music
     RPG::BGM.stop
     RPG::BGS.stop
     $data_system.gameover_me.play
   end
-  #--------------------------------------------------------------------------
-  # * Fade Out Frozen Graphics
-  #--------------------------------------------------------------------------
+
+  # Fade Out Frozen Graphics
   def fadeout_frozen_graphics
     Graphics.transition(fadeout_speed)
     Graphics.freeze
   end
-  #--------------------------------------------------------------------------
-  # * Create Background
-  #--------------------------------------------------------------------------
+
+  # Create Background
   def create_background
     @sprite = Sprite.new
     @sprite.bitmap = Cache.system("GameOver")
   end
-  #--------------------------------------------------------------------------
-  # * Free Background
-  #--------------------------------------------------------------------------
+
+  # Free Background
   def dispose_background
     @sprite.bitmap.dispose
     @sprite.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Get Fade Out Speed
+
+  # Get Fade Out Speed
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def fadeout_speed
     return 60
   end
-  #--------------------------------------------------------------------------
-  # * Get Fade In Speed
+
+  # Get Fade In Speed
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def fadein_speed
     return 120
   end
-  #--------------------------------------------------------------------------
-  # * Transition to Title Screen
-  #--------------------------------------------------------------------------
+
+  # Transition to Title Screen
   def goto_title
     fadeout_all
     SceneManager.goto(Scene_Title)

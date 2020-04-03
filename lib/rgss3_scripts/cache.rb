@@ -1,6 +1,5 @@
 #==============================================================================
 # ** Cache
-#------------------------------------------------------------------------------
 #  This module loads graphics, creates bitmap objects, and retains them.
 # To speed up load times and conserve memory, this module holds the
 # created bitmap object in the internal hash, allowing the program to
@@ -8,94 +7,80 @@
 #==============================================================================
 
 module Cache
-  #--------------------------------------------------------------------------
-  # * Get Animation Graphic
+  # Get Animation Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.animation(filename, hue)
     load_bitmap("Graphics/Animations/", filename, hue)
   end
-  #--------------------------------------------------------------------------
-  # * Get Battle Background (Floor) Graphic
+
+  # Get Battle Background (Floor) Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.battleback1(filename)
     load_bitmap("Graphics/Battlebacks1/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Battle Background (Wall) Graphic
+
+  # Get Battle Background (Wall) Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.battleback2(filename)
     load_bitmap("Graphics/Battlebacks2/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Battle Graphic
+
+  # Get Battle Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.battler(filename, hue)
     load_bitmap("Graphics/Battlers/", filename, hue)
   end
-  #--------------------------------------------------------------------------
-  # * Get Character Graphic
+
+  # Get Character Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.character(filename)
     load_bitmap("Graphics/Characters/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Face Graphic
+
+  # Get Face Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.face(filename)
     load_bitmap("Graphics/Faces/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Parallax Background Graphic
+
+  # Get Parallax Background Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.parallax(filename)
     load_bitmap("Graphics/Parallaxes/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Picture Graphic
+
+  # Get Picture Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.picture(filename)
     load_bitmap("Graphics/Pictures/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get System Graphic
+
+  # Get System Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.system(filename)
     load_bitmap("Graphics/System/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Tileset Graphic
+
+  # Get Tileset Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.tileset(filename)
     load_bitmap("Graphics/Tilesets/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Title (Background) Graphic
+
+  # Get Title (Background) Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.title1(filename)
     load_bitmap("Graphics/Titles1/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Get Title (Frame) Graphic
+
+  # Get Title (Frame) Graphic
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.title2(filename)
     load_bitmap("Graphics/Titles2/", filename)
   end
-  #--------------------------------------------------------------------------
-  # * Load Bitmap
+
+  # Load Bitmap
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.load_bitmap(folder_name, filename, hue = 0)
     @cache ||= {}
     if filename.empty?
@@ -106,24 +91,21 @@ module Cache
       hue_changed_bitmap(folder_name + filename, hue)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Create Empty Bitmap
+
+  # Create Empty Bitmap
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.empty_bitmap
     Bitmap.new(32, 32)
   end
-  #--------------------------------------------------------------------------
-  # * Create/Get Normal Bitmap
-  #--------------------------------------------------------------------------
+
+  # Create/Get Normal Bitmap
   def self.normal_bitmap(path)
     @cache[path] = Bitmap.new(path) unless include?(path)
     @cache[path]
   end
-  #--------------------------------------------------------------------------
-  # * Create/Get Hue-Changed Bitmap
+
+  # Create/Get Hue-Changed Bitmap
   # @return[Bitmap]
-  #--------------------------------------------------------------------------
   def self.hue_changed_bitmap(path, hue)
     key = [path, hue]
     unless include?(key)
@@ -132,15 +114,13 @@ module Cache
     end
     @cache[key]
   end
-  #--------------------------------------------------------------------------
-  # * Check Cache Existence
-  #--------------------------------------------------------------------------
+
+  # Check Cache Existence
   def self.include?(key)
     @cache[key] && !@cache[key].disposed?
   end
-  #--------------------------------------------------------------------------
-  # * Clear Cache
-  #--------------------------------------------------------------------------
+
+  # Clear Cache
   def self.clear
     @cache ||= {}
     @cache.clear

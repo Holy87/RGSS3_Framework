@@ -1,14 +1,11 @@
 #==============================================================================
 # ** Spriteset_Map
-#------------------------------------------------------------------------------
 #  This class brings together map screen sprites, tilemaps, etc. It's used
 # within the Scene_Map class.
 #==============================================================================
 
 class Spriteset_Map
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize
     create_viewports
     create_tilemap
@@ -20,9 +17,8 @@ class Spriteset_Map
     create_timer
     update
   end
-  #--------------------------------------------------------------------------
-  # * Create Viewport
-  #--------------------------------------------------------------------------
+
+  # Create Viewport
   def create_viewports
     @viewport1 = Viewport.new
     @viewport2 = Viewport.new
@@ -30,17 +26,15 @@ class Spriteset_Map
     @viewport2.z = 50
     @viewport3.z = 100
   end
-  #--------------------------------------------------------------------------
-  # * Create Tilemap
-  #--------------------------------------------------------------------------
+
+  # Create Tilemap
   def create_tilemap
     @tilemap = Tilemap.new(@viewport1)
     @tilemap.map_data = $game_map.data
     load_tileset
   end
-  #--------------------------------------------------------------------------
-  # * Load Tileset
-  #--------------------------------------------------------------------------
+
+  # Load Tileset
   def load_tileset
     @tileset = $game_map.tileset
     @tileset.tileset_names.each_with_index do |name, i|
@@ -48,16 +42,14 @@ class Spriteset_Map
     end
     @tilemap.flags = @tileset.flags
   end
-  #--------------------------------------------------------------------------
-  # * Create Parallax
-  #--------------------------------------------------------------------------
+
+  # Create Parallax
   def create_parallax
     @parallax = Plane.new(@viewport1)
     @parallax.z = -100
   end
-  #--------------------------------------------------------------------------
-  # * Create Character Sprite
-  #--------------------------------------------------------------------------
+
+  # Create Character Sprite
   def create_characters
     @character_sprites = []
     $game_map.events.values.each do |event|
@@ -72,9 +64,8 @@ class Spriteset_Map
     @character_sprites.push(Sprite_Character.new(@viewport1, $game_player))
     @map_id = $game_map.map_id
   end
-  #--------------------------------------------------------------------------
-  # * Create Airship Shadow Sprite
-  #--------------------------------------------------------------------------
+
+  # Create Airship Shadow Sprite
   def create_shadow
     @shadow_sprite = Sprite.new(@viewport1)
     @shadow_sprite.bitmap = Cache.system("Shadow")
@@ -82,27 +73,23 @@ class Spriteset_Map
     @shadow_sprite.oy = @shadow_sprite.bitmap.height
     @shadow_sprite.z = 180
   end
-  #--------------------------------------------------------------------------
-  # * Create Weather
-  #--------------------------------------------------------------------------
+
+  # Create Weather
   def create_weather
     @weather = Spriteset_Weather.new(@viewport2)
   end
-  #--------------------------------------------------------------------------
-  # * Create Picture Sprite
-  #--------------------------------------------------------------------------
+
+  # Create Picture Sprite
   def create_pictures
     @picture_sprites = []
   end
-  #--------------------------------------------------------------------------
-  # * Create Timer Sprite
-  #--------------------------------------------------------------------------
+
+  # Create Timer Sprite
   def create_timer
     @timer_sprite = Sprite_Timer.new(@viewport2)
   end
-  #--------------------------------------------------------------------------
-  # * Free
-  #--------------------------------------------------------------------------
+
+  # Free
   def dispose
     dispose_tilemap
     dispose_parallax
@@ -113,67 +100,57 @@ class Spriteset_Map
     dispose_timer
     dispose_viewports
   end
-  #--------------------------------------------------------------------------
-  # * Free Tilemap
-  #--------------------------------------------------------------------------
+
+  # Free Tilemap
   def dispose_tilemap
     @tilemap.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Free Parallax
-  #--------------------------------------------------------------------------
+
+  # Free Parallax
   def dispose_parallax
     @parallax.bitmap.dispose if @parallax.bitmap
     @parallax.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Free Character Sprite
-  #--------------------------------------------------------------------------
+
+  # Free Character Sprite
   def dispose_characters
-    @character_sprites.each {|sprite| sprite.dispose }
+    @character_sprites.each {|sprite| sprite.dispose}
   end
-  #--------------------------------------------------------------------------
-  # * Free Airship Shadow Sprite
-  #--------------------------------------------------------------------------
+
+  # Free Airship Shadow Sprite
   def dispose_shadow
     @shadow_sprite.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Free Weather
-  #--------------------------------------------------------------------------
+
+  # Free Weather
   def dispose_weather
     @weather.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Free Picture Sprite
-  #--------------------------------------------------------------------------
+
+  # Free Picture Sprite
   def dispose_pictures
-    @picture_sprites.compact.each {|sprite| sprite.dispose }
+    @picture_sprites.compact.each {|sprite| sprite.dispose}
   end
-  #--------------------------------------------------------------------------
-  # * Free Timer Sprite
-  #--------------------------------------------------------------------------
+
+  # Free Timer Sprite
   def dispose_timer
     @timer_sprite.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Free Viewport
-  #--------------------------------------------------------------------------
+
+  # Free Viewport
   def dispose_viewports
     @viewport1.dispose
     @viewport2.dispose
     @viewport3.dispose
   end
-  #--------------------------------------------------------------------------
-  # * Refresh Characters
-  #--------------------------------------------------------------------------
+
+  # Refresh Characters
   def refresh_characters
     dispose_characters
     create_characters
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     update_tileset
     update_tilemap
@@ -185,27 +162,24 @@ class Spriteset_Map
     update_timer
     update_viewports
   end
-  #--------------------------------------------------------------------------
-  # * Update Tileset
-  #--------------------------------------------------------------------------
+
+  # Update Tileset
   def update_tileset
     if @tileset != $game_map.tileset
       load_tileset
       refresh_characters
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Tilemap
-  #--------------------------------------------------------------------------
+
+  # Update Tilemap
   def update_tilemap
     @tilemap.map_data = $game_map.data
     @tilemap.ox = $game_map.display_x * 32
     @tilemap.oy = $game_map.display_y * 32
     @tilemap.update
   end
-  #--------------------------------------------------------------------------
-  # * Update Parallax
-  #--------------------------------------------------------------------------
+
+  # Update Parallax
   def update_parallax
     if @parallax_name != $game_map.parallax_name
       @parallax_name = $game_map.parallax_name
@@ -216,16 +190,14 @@ class Spriteset_Map
     @parallax.ox = $game_map.parallax_ox(@parallax.bitmap)
     @parallax.oy = $game_map.parallax_oy(@parallax.bitmap)
   end
-  #--------------------------------------------------------------------------
-  # * Update Character Sprite
-  #--------------------------------------------------------------------------
+
+  # Update Character Sprite
   def update_characters
     refresh_characters if @map_id != $game_map.map_id
-    @character_sprites.each {|sprite| sprite.update }
+    @character_sprites.each {|sprite| sprite.update}
   end
-  #--------------------------------------------------------------------------
-  # * Update Airship Shadow Sprite
-  #--------------------------------------------------------------------------
+
+  # Update Airship Shadow Sprite
   def update_shadow
     airship = $game_map.airship
     @shadow_sprite.x = airship.screen_x
@@ -233,9 +205,8 @@ class Spriteset_Map
     @shadow_sprite.opacity = airship.altitude * 8
     @shadow_sprite.update
   end
-  #--------------------------------------------------------------------------
-  # * Update Weather
-  #--------------------------------------------------------------------------
+
+  # Update Weather
   def update_weather
     @weather.type = $game_map.screen.weather_type
     @weather.power = $game_map.screen.weather_power
@@ -243,24 +214,21 @@ class Spriteset_Map
     @weather.oy = $game_map.display_y * 32
     @weather.update
   end
-  #--------------------------------------------------------------------------
+
   # *Update Picture Sprite
-  #--------------------------------------------------------------------------
   def update_pictures
     $game_map.screen.pictures.each do |pic|
       @picture_sprites[pic.number] ||= Sprite_Picture.new(@viewport2, pic)
       @picture_sprites[pic.number].update
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Timer Sprite
-  #--------------------------------------------------------------------------
+
+  # Update Timer Sprite
   def update_timer
     @timer_sprite.update
   end
-  #--------------------------------------------------------------------------
-  # * Update Viewport
-  #--------------------------------------------------------------------------
+
+  # Update Viewport
   def update_viewports
     @viewport1.tone.set($game_map.screen.tone)
     @viewport1.ox = $game_map.screen.shake

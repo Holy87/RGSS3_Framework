@@ -1,139 +1,110 @@
 #==============================================================================
 # ** Game_Actor
-#------------------------------------------------------------------------------
 #  This class handles actors. It is used within the Game_Actors class
 # ($game_actors) and is also referenced from the Game_Party class ($game_party).
 #==============================================================================
 
 class Game_Actor < Game_Battler
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [String] name
-  # @attr [String] nickname
-  # @attr [String] character_name
-  # @attr [Integer] character_index
-  # @attr [String] face_name
-  # @attr [Integer] face_index
-  # @attr [Integer] class_id
-  # @attr [Integer] level
-  # @attr [Integer] action_input_index
-  # @attr [RPG::Skill] last_skill
-  attr_accessor :name                     # Name
-  attr_accessor :nickname                 # Nickname
-  attr_reader   :character_name           # character graphic filename
-  attr_reader   :character_index          # character graphic index
-  attr_reader   :face_name                # face graphic filename
-  attr_reader   :face_index               # face graphic index
-  attr_reader   :class_id                 # class ID
-  attr_reader   :level                    # level
-  attr_reader   :action_input_index       # action number being input
-  attr_reader   :last_skill               # For cursor memorization:  Skill
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # the actor name
+  # @return [String]
+  attr_accessor :name
+  # the actor title
+  # @return [String]
+  attr_accessor :nickname
+  # character graphic filename
+  # @return [String]
+  attr_reader :character_name
+  # character graphic index
+  # @return [Integer]
+  attr_reader :character_index
+  # face graphic filename
+  # @return [String]
+  attr_reader :face_name
+  # face graphic index
+  # @return [Integer]
+  attr_reader :face_index
+  # @return [Integer] class ID
+  attr_reader :class_id
+  # @return [Integer] actor level
+  attr_reader :level
+  # @return [Integer] action number being input
+  attr_reader :action_input_index
+  # @return [RPG::Skill] For cursor memorization: Skill
+  attr_reader :last_skill
+  # Object Initialization
   def initialize(actor_id)
-    super()
-    setup(actor_id)
-    @last_skill = Game_BaseItem.new
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Setup
-  #--------------------------------------------------------------------------
+
+  # Setup
   def setup(actor_id)
-    @actor_id = actor_id
-    @name = actor.name
-    @nickname = actor.nickname
-    init_graphics
-    @class_id = actor.class_id
-    @level = actor.initial_level
-    @exp = {}
-    @equips = []
-    init_exp
-    init_skills
-    init_equips(actor.equips)
-    clear_param_plus
-    recover_all
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Actor Object
+
+  # Get Actor Object
   # @return [RPG::Actor]
-  #--------------------------------------------------------------------------
   def actor
-    $data_actors[@actor_id]
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Initialize Graphics
-  #--------------------------------------------------------------------------
+
+  # Initialize Graphics
   def init_graphics
-    @character_name = actor.character_name
-    @character_index = actor.character_index
-    @face_name = actor.face_name
-    @face_index = actor.face_index
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Total EXP Required for Rising to Specified Level
-  #--------------------------------------------------------------------------
+
+  # Get Total EXP Required for Rising to Specified Level
   # @return [Integer]
   def exp_for_level(level)
-    self.class.exp_for_level(level)
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Initialize EXP
-  #--------------------------------------------------------------------------
+
+  # Initialize EXP
   def init_exp
-    @exp[@class_id] = current_level_exp
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Experience
+
+  # Get Experience
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def exp
-    @exp[@class_id]
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get Minimum EXP for Current Level
+
+  # Get Minimum EXP for Current Level
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def current_level_exp
-    exp_for_level(@level)
+    fail NotImplementedError
   end
-  #--------------------------------------------------------------------------
-  # * Get EXP for Next Level
+
+  # Get EXP for Next Level
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def next_level_exp
     exp_for_level(@level + 1)
   end
-  #--------------------------------------------------------------------------
-  # * Maximum Level
+
+  # Maximum Level
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def max_level
     actor.max_level
   end
-  #--------------------------------------------------------------------------
-  # * Determine Maximum Level
-  #--------------------------------------------------------------------------
+
+  # Determine Maximum Level
   def max_level?
     @level >= max_level
   end
-  #--------------------------------------------------------------------------
-  # * Initialize Skills
-  #--------------------------------------------------------------------------
+
+  # Initialize Skills
   def init_skills
     @skills = []
     self.class.learnings.each do |learning|
       learn_skill(learning.skill_id) if learning.level <= @level
     end
   end
-  #--------------------------------------------------------------------------
-  # * Initialize Equipment
+
+  # Initialize Equipment
   #     equips:  An array of initial equipment
-  #--------------------------------------------------------------------------
   # @param [Array<RPG::EquipItem>] equips
   def init_equips(equips)
-    @equips = Array.new(equip_slots.size) { Game_BaseItem.new }
+    @equips = Array.new(equip_slots.size) {Game_BaseItem.new}
     equips.each_with_index do |item_id, i|
       etype_id = index_to_etype_id(i)
       slot_id = empty_slot(etype_id)
@@ -141,72 +112,63 @@ class Game_Actor < Game_Battler
     end
     refresh
   end
-  #--------------------------------------------------------------------------
-  # * Convert Index Set by Editor to Equipment Type ID
+
+  # Convert Index Set by Editor to Equipment Type ID
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def index_to_etype_id(index)
     index == 1 && dual_wield? ? 0 : index
   end
-  #--------------------------------------------------------------------------
-  # * Convert from Equipment Type to List of Slot IDs
+
+  # Convert from Equipment Type to List of Slot IDs
   # @return [Array<Integer>]
-  #--------------------------------------------------------------------------
   def slot_list(etype_id)
     result = []
-    equip_slots.each_with_index {|e, i| result.push(i) if e == etype_id }
+    equip_slots.each_with_index {|e, i| result.push(i) if e == etype_id}
     result
   end
-  #--------------------------------------------------------------------------
-  # * Convert from Equipment Type to Slot ID (Empty Take Precedence)
-  #--------------------------------------------------------------------------
+
+  # Convert from Equipment Type to Slot ID (Empty Take Precedence)
   def empty_slot(etype_id)
     list = slot_list(etype_id)
-    list.find {|i| @equips[i].is_nil? } || list[0]
+    list.find {|i| @equips[i].is_nil?} || list[0]
   end
-  #--------------------------------------------------------------------------
-  # * Get Equipment Slot Array
+
+  # Get Equipment Slot Array
   # @return [Array<Integer>]
-  #--------------------------------------------------------------------------
   def equip_slots
-    return [0,0,2,3,4] if dual_wield?       # Dual wield
-    return [0,1,2,3,4]                      # Normal
+    return [0, 0, 2, 3, 4] if dual_wield? # Dual wield
+    return [0, 1, 2, 3, 4] # Normal
   end
-  #--------------------------------------------------------------------------
-  # * Get Weapon Object Array
+
+  # Get Weapon Object Array
   # @return [Array<RPG::Weapon>]
-  #--------------------------------------------------------------------------
   def weapons
-    @equips.select {|item| item.is_weapon? }.collect {|item| item.object }
+    @equips.select {|item| item.is_weapon?}.collect {|item| item.object}
   end
-  #--------------------------------------------------------------------------
-  # * Get Armor Object Array
+
+  # Get Armor Object Array
   # @return [Array<RPG::Armor>]
-  #--------------------------------------------------------------------------
   def armors
-    @equips.select {|item| item.is_armor? }.collect {|item| item.object }
+    @equips.select {|item| item.is_armor?}.collect {|item| item.object}
   end
-  #--------------------------------------------------------------------------
-  # * Get Equipped Item Object Array
+
+  # Get Equipped Item Object Array
   # @return [Array<RPG::EquipItem>]
-  #--------------------------------------------------------------------------
   def equips
-    @equips.collect {|item| item.object }
+    @equips.collect {|item| item.object}
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Equipment Change Possible
+
+  # Determine if Equipment Change Possible
   #     slot_id:  Equipment slot ID
-  #--------------------------------------------------------------------------
   def equip_change_ok?(slot_id)
     return false if equip_type_fixed?(equip_slots[slot_id])
     return false if equip_type_sealed?(equip_slots[slot_id])
     return true
   end
-  #--------------------------------------------------------------------------
-  # * Change Equipment
+
+  # Change Equipment
   #     slot_id:  Equipment slot ID
   #     item:    Weapon/armor (remove equipment if nil)
-  #--------------------------------------------------------------------------
   # @param [Integer] slot_id
   # @param [RPG::EquipItem] item
   def change_equip(slot_id, item)
@@ -215,11 +177,10 @@ class Game_Actor < Game_Battler
     @equips[slot_id].object = item
     refresh
   end
-  #--------------------------------------------------------------------------
-  # * Forcibly Change Equipment
+
+  # Forcibly Change Equipment
   #     slot_id:  Equipment slot ID
   #     item:     Weapon/armor (remove equipment if nil)
-  #--------------------------------------------------------------------------
   # @param [Integer] slot_id
   # @param [RPG::EquipItem] item
   def force_change_equip(slot_id, item)
@@ -227,11 +188,10 @@ class Game_Actor < Game_Battler
     release_unequippable_items(false)
     refresh
   end
-  #--------------------------------------------------------------------------
-  # * Trade Item with Party
+
+  # Trade Item with Party
   #     new_item:  Item to get from party
   #     old_item:  Item to give to party
-  #--------------------------------------------------------------------------
   # @param [RPG::EquipItem] new_item
   # @param [RPG::EquipItem] old_item
   def trade_item_with_party(new_item, old_item)
@@ -240,11 +200,10 @@ class Game_Actor < Game_Battler
     $game_party.lose_item(new_item, 1)
     return true
   end
-  #--------------------------------------------------------------------------
-  # * Change Equipment (Specify with ID)
+
+  # Change Equipment (Specify with ID)
   #     slot_id:  Equipment slot ID
   #     item_id:  Weapons/armor ID
-  #--------------------------------------------------------------------------
   def change_equip_by_id(slot_id, item_id)
     if equip_slots[slot_id] == 0
       change_equip(slot_id, $data_weapons[item_id])
@@ -252,19 +211,17 @@ class Game_Actor < Game_Battler
       change_equip(slot_id, $data_armors[item_id])
     end
   end
-  #--------------------------------------------------------------------------
-  # * Discard Equipment
+
+  # Discard Equipment
   #     item:  Weapon/armor to discard
-  #--------------------------------------------------------------------------
   # @param [RPG::EquipItem] item
   def discard_equip(item)
     slot_id = equips.index(item)
     @equips[slot_id].object = nil if slot_id
   end
-  #--------------------------------------------------------------------------
-  # * Remove Equipment that Cannot Be Equipped 
+
+  # Remove Equipment that Cannot Be Equipped
   #     item_gain:  Return removed equipment to party.
-  #--------------------------------------------------------------------------
   def release_unequippable_items(item_gain = true)
     loop do
       last_equips = equips.dup
@@ -277,31 +234,28 @@ class Game_Actor < Game_Battler
       return if equips == last_equips
     end
   end
-  #--------------------------------------------------------------------------
-  # * Remove All Equipment
-  #--------------------------------------------------------------------------
+
+  # Remove All Equipment
   def clear_equipments
     equip_slots.size.times do |i|
       change_equip(i, nil) if equip_change_ok?(i)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Ultimate Equipment
-  #--------------------------------------------------------------------------
+
+  # Ultimate Equipment
   def optimize_equipments
     clear_equipments
     equip_slots.size.times do |i|
       next if !equip_change_ok?(i)
       items = $game_party.equip_items.select do |item|
         item.etype_id == equip_slots[i] &&
-        equippable?(item) && item.performance >= 0
+            equippable?(item) && item.performance >= 0
       end
-      change_equip(i, items.max_by {|item| item.performance })
+      change_equip(i, items.max_by {|item| item.performance})
     end
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Skill-Required Weapon Is Equipped
-  #--------------------------------------------------------------------------
+
+  # Determine if Skill-Required Weapon Is Equipped
   def skill_wtype_ok?(skill)
     wtype_id1 = skill.required_wtype_id1
     wtype_id2 = skill.required_wtype_id2
@@ -310,118 +264,101 @@ class Game_Actor < Game_Battler
     return true if wtype_id2 > 0 && wtype_equipped?(wtype_id2)
     return false
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Specific Type of Weapon Is Equipped
-  #--------------------------------------------------------------------------
+
+  # Determine if Specific Type of Weapon Is Equipped
   def wtype_equipped?(wtype_id)
-    weapons.any? {|weapon| weapon.wtype_id == wtype_id }
+    weapons.any? {|weapon| weapon.wtype_id == wtype_id}
   end
-  #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
+
+  # Refresh
   def refresh
     release_unequippable_items
     super
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Actor or Not
-  #--------------------------------------------------------------------------
+
+  # Determine if Actor or Not
   def actor?
     return true
   end
-  #--------------------------------------------------------------------------
-  # * Get Allied Units
+
+  # Get Allied Units
   # @return [Game_Party]
-  #--------------------------------------------------------------------------
   def friends_unit
     $game_party
   end
-  #--------------------------------------------------------------------------
-  # * Get Enemy Units
+
+  # Get Enemy Units
   # @return [Game_Troop]
-  #--------------------------------------------------------------------------
   def opponents_unit
     $game_troop
   end
-  #--------------------------------------------------------------------------
-  # * Get Actor ID
-  #--------------------------------------------------------------------------
+
+  # Get Actor ID
   # @return [Integer]
   def id
     @actor_id
   end
-  #--------------------------------------------------------------------------
-  # * Get Index
-  #--------------------------------------------------------------------------
+
+  # Get Index
   # @return [Integer]
   def index
     $game_party.members.index(self)
   end
-  #--------------------------------------------------------------------------
-  # * Determine Battle Members
-  #--------------------------------------------------------------------------
+
+  # Determine Battle Members
   def battle_member?
     $game_party.battle_members.include?(self)
   end
-  #--------------------------------------------------------------------------
-  # * Get Class Object
+
+  # Get Class Object
   # @return [RPG::Class]
-  #--------------------------------------------------------------------------
   def class
     $data_classes[@class_id]
   end
-  #--------------------------------------------------------------------------
-  # * Get Skill Object Array
+
+  # Get Skill Object Array
   # @return [Array<RPG::Skill>]
-  #--------------------------------------------------------------------------
   def skills
-    (@skills | added_skills).sort.collect {|id| $data_skills[id] }
+    (@skills | added_skills).sort.collect {|id| $data_skills[id]}
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of Currently Usable Skills
+
+  # Get Array of Currently Usable Skills
   # @return [Array<RPG::Skill>]
-  #--------------------------------------------------------------------------
   def usable_skills
-    skills.select {|skill| usable?(skill) }
+    skills.select {|skill| usable?(skill)}
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of All Objects Retaining Features
+
+  # Get Array of All Objects Retaining Features
   # @return [Array<RPG::BaseItem::Feature>]
-  #--------------------------------------------------------------------------
   def feature_objects
     super + [actor] + [self.class] + equips.compact
   end
-  #--------------------------------------------------------------------------
-  # * Get Attack Element
+
+  # Get Attack Element
   # @return [Array<Integer>]
-  #--------------------------------------------------------------------------
   def atk_elements
     set = super
-    set |= [1] if weapons.compact.empty?  # Unarmed: Physical element
+    set |= [1] if weapons.compact.empty? # Unarmed: Physical element
     return set
   end
-  #--------------------------------------------------------------------------
-  # * Get Maximum Value of Parameter
-  #--------------------------------------------------------------------------
+
+  # Get Maximum Value of Parameter
   def param_max(param_id)
-    return 9999 if param_id == 0  # MHP
+    return 9999 if param_id == 0 # MHP
     return super
   end
-  #--------------------------------------------------------------------------
-  # * Get Base Value of Parameter
-  #--------------------------------------------------------------------------
+
+  # Get Base Value of Parameter
   def param_base(param_id)
     self.class.params[param_id, @level]
   end
-  #--------------------------------------------------------------------------
-  # * Get Added Value of Parameter
-  #--------------------------------------------------------------------------
+
+  # Get Added Value of Parameter
   def param_plus(param_id)
-    equips.compact.inject(super) {|r, item| r += item.params[param_id] }
+    equips.compact.inject(super) {|r, item| r += item.params[param_id]}
   end
-  #--------------------------------------------------------------------------
-  # * Get Normal Attack Animation ID
-  #--------------------------------------------------------------------------
+
+  # Get Normal Attack Animation ID
   def atk_animation_id1
     if dual_wield?
       return weapons[0].animation_id if weapons[0]
@@ -430,9 +367,8 @@ class Game_Actor < Game_Battler
       return weapons[0] ? weapons[0].animation_id : 1
     end
   end
-  #--------------------------------------------------------------------------
-  # * Get Animation ID of Normal Attack (Dual Wield: Weapon 2)
-  #--------------------------------------------------------------------------
+
+  # Get Animation ID of Normal Attack (Dual Wield: Weapon 2)
   def atk_animation_id2
     if dual_wield?
       return weapons[1] ? weapons[1].animation_id : 0
@@ -440,10 +376,9 @@ class Game_Actor < Game_Battler
       return 0
     end
   end
-  #--------------------------------------------------------------------------
-  # * Change Experience
+
+  # Change Experience
   #     show : Level up display flag
-  #--------------------------------------------------------------------------
   def change_exp(exp, show)
     @exp[@class_id] = [exp, 0].max
     last_level = @level
@@ -453,31 +388,27 @@ class Game_Actor < Game_Battler
     display_level_up(skills - last_skills) if show && @level > last_level
     refresh
   end
-  #--------------------------------------------------------------------------
-  # * Get Experience
-  #--------------------------------------------------------------------------
+
+  # Get Experience
   def exp
     @exp[@class_id]
   end
-  #--------------------------------------------------------------------------
-  # * Level Up
-  #--------------------------------------------------------------------------
+
+  # Level Up
   def level_up
     @level += 1
     self.class.learnings.each do |learning|
       learn_skill(learning.skill_id) if learning.level == @level
     end
   end
-  #--------------------------------------------------------------------------
-  # * Level Down
-  #--------------------------------------------------------------------------
+
+  # Level Down
   def level_down
     @level -= 1
   end
-  #--------------------------------------------------------------------------
-  # * Show Level Up Message
+
+  # Show Level Up Message
   #     new_skills : Array of newly learned skills
-  #--------------------------------------------------------------------------
   def display_level_up(new_skills)
     $game_message.new_page
     $game_message.add(sprintf(Vocab::LevelUp, @name, Vocab::level, @level))
@@ -485,73 +416,63 @@ class Game_Actor < Game_Battler
       $game_message.add(sprintf(Vocab::ObtainSkill, skill.name))
     end
   end
-  #--------------------------------------------------------------------------
-  # * Get EXP (Account for Experience Rate)
-  #--------------------------------------------------------------------------
+
+  # Get EXP (Account for Experience Rate)
   def gain_exp(exp)
     change_exp(self.exp + (exp * final_exp_rate).to_i, true)
   end
-  #--------------------------------------------------------------------------
-  # * Calculate Final EXP Rate
-  #--------------------------------------------------------------------------
+
+  # Calculate Final EXP Rate
   def final_exp_rate
     exr * (battle_member? ? 1 : reserve_members_exp_rate)
   end
-  #--------------------------------------------------------------------------
-  # * Get EXP Rate for Reserve Members
-  #--------------------------------------------------------------------------
+
+  # Get EXP Rate for Reserve Members
   def reserve_members_exp_rate
     $data_system.opt_extra_exp ? 1 : 0
   end
-  #--------------------------------------------------------------------------
-  # * Change Level
+
+  # Change Level
   #     show : Level up display flag
-  #--------------------------------------------------------------------------
   def change_level(level, show)
     level = [[level, max_level].min, 1].max
     change_exp(exp_for_level(level), show)
   end
-  #--------------------------------------------------------------------------
-  # * Learn Skill
-  #--------------------------------------------------------------------------
+
+  # Learn Skill
   def learn_skill(skill_id)
     unless skill_learn?($data_skills[skill_id])
       @skills.push(skill_id)
       @skills.sort!
     end
   end
-  #--------------------------------------------------------------------------
-  # * Forget Skill
-  #--------------------------------------------------------------------------
+
+  # Forget Skill
   def forget_skill(skill_id)
     @skills.delete(skill_id)
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Skill Is Already Learned
-  #--------------------------------------------------------------------------
+
+  # Determine if Skill Is Already Learned
   def skill_learn?(skill)
     skill.is_a?(RPG::Skill) && @skills.include?(skill.id)
   end
-  #--------------------------------------------------------------------------
-  # * Get Description
+
+  # Get Description
   # @return [String]
-  #--------------------------------------------------------------------------
   def description
     actor.description
   end
-  #--------------------------------------------------------------------------
-  # * Change Class
+
+  # Change Class
   #     keep_exp:  Keep EXP
-  #--------------------------------------------------------------------------
   def change_class(class_id, keep_exp = false)
     @exp[class_id] = exp if keep_exp
     @class_id = class_id
     change_exp(@exp[@class_id] || 0, false)
     refresh
   end
-  #--------------------------------------------------------------------------
-  # * Change Graphics
-  #--------------------------------------------------------------------------
+
+  # Change Graphics
   # @param [String] character_name
   # @param [Integer] character_index
   # @param [String] face_name
@@ -562,32 +483,28 @@ class Game_Actor < Game_Battler
     @face_name = face_name
     @face_index = face_index
   end
-  #--------------------------------------------------------------------------
-  # * Use Sprites?
-  #--------------------------------------------------------------------------
+
+  # Use Sprites?
   def use_sprite?
     return false
   end
-  #--------------------------------------------------------------------------
-  # * Execute Damage Effect
-  #--------------------------------------------------------------------------
+
+  # Execute Damage Effect
   def perform_damage_effect
     $game_troop.screen.start_shake(5, 5, 10)
     @sprite_effect_type = :blink
     Sound.play_actor_damage
   end
-  #--------------------------------------------------------------------------
-  # * Execute Collapse Effect
-  #--------------------------------------------------------------------------
+
+  # Execute Collapse Effect
   def perform_collapse_effect
     if $game_party.in_battle
       @sprite_effect_type = :collapse
       Sound.play_actor_collapse
     end
   end
-  #--------------------------------------------------------------------------
-  # * Create Action Candidate List for Auto Battle
-  #--------------------------------------------------------------------------
+
+  # Create Action Candidate List for Auto Battle
   def make_action_list
     list = []
     list.push(Game_Action.new(self).set_attack.evaluate)
@@ -596,25 +513,22 @@ class Game_Actor < Game_Battler
     end
     list
   end
-  #--------------------------------------------------------------------------
-  # * Create Action During Auto Battle
-  #--------------------------------------------------------------------------
+
+  # Create Action During Auto Battle
   def make_auto_battle_actions
     @actions.size.times do |i|
-      @actions[i] = make_action_list.max_by {|action| action.value }
+      @actions[i] = make_action_list.max_by {|action| action.value}
     end
   end
-  #--------------------------------------------------------------------------
-  # * Create Action During Confusion
-  #--------------------------------------------------------------------------
+
+  # Create Action During Confusion
   def make_confusion_actions
     @actions.size.times do |i|
       @actions[i].set_confusion
     end
   end
-  #--------------------------------------------------------------------------
-  # * Create Battle Action
-  #--------------------------------------------------------------------------
+
+  # Create Battle Action
   def make_actions
     super
     if auto_battle?
@@ -623,115 +537,100 @@ class Game_Actor < Game_Battler
       make_confusion_actions
     end
   end
-  #--------------------------------------------------------------------------
-  # * Processing Performed When Player Takes 1 Step
-  #--------------------------------------------------------------------------
+
+  # Processing Performed When Player Takes 1 Step
   def on_player_walk
     @result.clear
     check_floor_effect
     if $game_player.normal_walk?
       turn_end_on_map
-      states.each {|state| update_state_steps(state) }
+      states.each {|state| update_state_steps(state)}
       show_added_states
       show_removed_states
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Step Count for State
-  #--------------------------------------------------------------------------
+
+  # Update Step Count for State
   def update_state_steps(state)
     if state.remove_by_walking
       @state_steps[state.id] -= 1 if @state_steps[state.id] > 0
       remove_state(state.id) if @state_steps[state.id] == 0
     end
   end
-  #--------------------------------------------------------------------------
-  # * Show Added State
-  #--------------------------------------------------------------------------
+
+  # Show Added State
   def show_added_states
     @result.added_state_objects.each do |state|
       $game_message.add(name + state.message1) unless state.message1.empty?
     end
   end
-  #--------------------------------------------------------------------------
-  # * Show Removed State
-  #--------------------------------------------------------------------------
+
+  # Show Removed State
   def show_removed_states
     @result.removed_state_objects.each do |state|
       $game_message.add(name + state.message4) unless state.message4.empty?
     end
   end
-  #--------------------------------------------------------------------------
-  # * Number of Steps Regarded as One Turn in Battle
-  #--------------------------------------------------------------------------
+
+  # Number of Steps Regarded as One Turn in Battle
   def steps_for_turn
     return 20
   end
-  #--------------------------------------------------------------------------
-  # * End of Turn Processing on Map Screen
-  #--------------------------------------------------------------------------
+
+  # End of Turn Processing on Map Screen
   def turn_end_on_map
     if $game_party.steps % steps_for_turn == 0
       on_turn_end
       perform_map_damage_effect if @result.hp_damage > 0
     end
   end
-  #--------------------------------------------------------------------------
-  # * Determine Floor Effect
-  #--------------------------------------------------------------------------
+
+  # Determine Floor Effect
   def check_floor_effect
     execute_floor_damage if $game_player.on_damage_floor?
   end
-  #--------------------------------------------------------------------------
-  # * Floor Damage Processing
-  #--------------------------------------------------------------------------
+
+  # Floor Damage Processing
   def execute_floor_damage
     damage = (basic_floor_damage * fdr).to_i
     self.hp -= [damage, max_floor_damage].min
     perform_map_damage_effect if damage > 0
   end
-  #--------------------------------------------------------------------------
-  # * Get Base Value for Floor Damage
-  #--------------------------------------------------------------------------
+
+  # Get Base Value for Floor Damage
   def basic_floor_damage
     return 10
   end
-  #--------------------------------------------------------------------------
-  # * Get Maximum Value for Floor Damage
-  #--------------------------------------------------------------------------
+
+  # Get Maximum Value for Floor Damage
   def max_floor_damage
     $data_system.opt_floor_death ? hp : [hp - 1, 0].max
   end
-  #--------------------------------------------------------------------------
-  # * Execute Damage Effect on Map
-  #--------------------------------------------------------------------------
+
+  # Execute Damage Effect on Map
   def perform_map_damage_effect
     $game_map.screen.start_flash_for_damage
   end
-  #--------------------------------------------------------------------------
-  # * Clear Actions
-  #--------------------------------------------------------------------------
+
+  # Clear Actions
   def clear_actions
     super
     @action_input_index = 0
   end
-  #--------------------------------------------------------------------------
-  # * Get Action Being Input
-  #--------------------------------------------------------------------------
+
+  # Get Action Being Input
   def input
     @actions[@action_input_index]
   end
-  #--------------------------------------------------------------------------
-  # * To Next Command Input
-  #--------------------------------------------------------------------------
+
+  # To Next Command Input
   def next_command
     return false if @action_input_index >= @actions.size - 1
     @action_input_index += 1
     return true
   end
-  #--------------------------------------------------------------------------
-  # * To Previous Command Input
-  #--------------------------------------------------------------------------
+
+  # To Previous Command Input
   def prior_command
     return false if @action_input_index <= 0
     @action_input_index -= 1

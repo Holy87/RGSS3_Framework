@@ -1,72 +1,61 @@
 #==============================================================================
 # ** Game_Unit
-#------------------------------------------------------------------------------
 #  This class handles units. It's used as a superclass of the Game_Party and
 # and Game_Troop classes.
 #==============================================================================
 
 class Game_Unit
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_reader   :in_battle                # in battle flag
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Public Instance Variables
+  attr_reader :in_battle # in battle flag
+  # Object Initialization
   def initialize
     @in_battle = false
   end
-  #--------------------------------------------------------------------------
-  # * Get Members
-  #--------------------------------------------------------------------------
+
+  # Get Members
   # @return [Array<Game_Battler>]
   def members
     return []
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of Living Members
+
+  # Get Array of Living Members
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def alive_members
-    members.select {|member| member.alive? }
+    members.select {|member| member.alive?}
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of Incapacitated Members
+
+  # Get Array of Incapacitated Members
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def dead_members
-    members.select {|member| member.dead? }
+    members.select {|member| member.dead?}
   end
-  #--------------------------------------------------------------------------
-  # * Get Array of Movable Members
+
+  # Get Array of Movable Members
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def movable_members
-    members.select {|member| member.movable? }
+    members.select {|member| member.movable?}
   end
-  #--------------------------------------------------------------------------
-  # * Clear all Members' Battle Actions
-  #--------------------------------------------------------------------------
+
+  # Clear all Members' Battle Actions
   def clear_actions
-    members.each {|member| member.clear_actions }
+    members.each {|member| member.clear_actions}
   end
-  #--------------------------------------------------------------------------
-  # * Calculate Average Value of Agility
-  #--------------------------------------------------------------------------
+
+  # Calculate Average Value of Agility
+  # @return [Integer]
   def agi
     return 1 if members.size == 0
-    members.inject(0) {|r, member| r += member.agi } / members.size
+    members.inject(0) {|r, member| r += member.agi} / members.size
   end
-  #--------------------------------------------------------------------------
-  # * Calculate Total Target Rate
-  #--------------------------------------------------------------------------
+
+  # Calculate Total Target Rate
+  # @return [Integer]
   def tgr_sum
-    alive_members.inject(0) {|r, member| r + member.tgr }
+    alive_members.inject(0) {|r, member| r + member.tgr}
   end
-  #--------------------------------------------------------------------------
-  # * Random Selection of Target
+
+  # Random Selection of Target
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def random_target
     tgr_rand = rand * tgr_sum
     alive_members.each do |member|
@@ -75,66 +64,57 @@ class Game_Unit
     end
     alive_members[0]
   end
-  #--------------------------------------------------------------------------
-  # * Randomly Determine Target (K.O.)
+
+  # Randomly Determine Target (K.O.)
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def random_dead_target
     dead_members.empty? ? nil : dead_members[rand(dead_members.size)]
   end
-  #--------------------------------------------------------------------------
-  # * Smooth Selection of Target
+
+  # Smooth Selection of Target
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def smooth_target(index)
     member = members[index]
     (member && member.alive?) ? member : alive_members[0]
   end
-  #--------------------------------------------------------------------------
-  # * Smooth Selection of Target (K.O.)
+
+  # Smooth Selection of Target (K.O.)
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def smooth_dead_target(index)
     member = members[index]
     (member && member.dead?) ? member : dead_members[0]
   end
-  #--------------------------------------------------------------------------
-  # * Clear Action Results
-  #--------------------------------------------------------------------------
+
+  # Clear Action Results
   def clear_results
-    members.select {|member| member.result.clear }
+    members.select {|member| member.result.clear}
   end
-  #--------------------------------------------------------------------------
-  # * Processing at Start of Battle
-  #--------------------------------------------------------------------------
+
+  # Processing at Start of Battle
   def on_battle_start
-    members.each {|member| member.on_battle_start }
+    members.each {|member| member.on_battle_start}
     @in_battle = true
   end
-  #--------------------------------------------------------------------------
-  # * Processing at End of Battle
-  #--------------------------------------------------------------------------
+
+  # Processing at End of Battle
   def on_battle_end
     @in_battle = false
-    members.each {|member| member.on_battle_end }
+    members.each {|member| member.on_battle_end}
   end
-  #--------------------------------------------------------------------------
-  # * Create Battle Action
-  #--------------------------------------------------------------------------
+
+  # Create Battle Action
   def make_actions
-    members.each {|member| member.make_actions }
+    members.each {|member| member.make_actions}
   end
-  #--------------------------------------------------------------------------
-  # * Determine Everyone is Dead
-  #--------------------------------------------------------------------------
+
+  # Determine Everyone is Dead
   def all_dead?
     alive_members.empty?
   end
-  #--------------------------------------------------------------------------
-  # * Get Substitute Battler
+
+  # Get Substitute Battler
   # @return [Array<Game_Battler>]
-  #--------------------------------------------------------------------------
   def substitute_battler
-    members.find {|member| member.substitute? }
+    members.find {|member| member.substitute?}
   end
 end

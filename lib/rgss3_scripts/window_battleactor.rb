@@ -1,14 +1,11 @@
 #==============================================================================
 # ** Window_BattleActor
-#------------------------------------------------------------------------------
 #  This window is for selecting an actor's action target on the battle screen.
 #==============================================================================
 
 class Window_BattleActor < Window_BattleStatus
-  #--------------------------------------------------------------------------
-  # * Object Initialization
+  # Object Initialization
   #     info_viewport : Viewport for displaying information
-  #--------------------------------------------------------------------------
   # @param [Viewport] info_viewport
   def initialize(info_viewport)
     super()
@@ -17,9 +14,8 @@ class Window_BattleActor < Window_BattleStatus
     self.openness = 255
     @info_viewport = info_viewport
   end
-  #--------------------------------------------------------------------------
-  # * Show Window
-  #--------------------------------------------------------------------------
+
+  # Show Window
   def show
     if @info_viewport
       width_remain = Graphics.width - width
@@ -29,9 +25,8 @@ class Window_BattleActor < Window_BattleStatus
     end
     super
   end
-  #--------------------------------------------------------------------------
-  # * Hide Window
-  #--------------------------------------------------------------------------
+
+  # Hide Window
   def hide
     @info_viewport.rect.width = Graphics.width if @info_viewport
     super

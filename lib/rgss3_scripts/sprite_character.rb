@@ -1,37 +1,30 @@
 #==============================================================================
 # ** Sprite_Character
-#------------------------------------------------------------------------------
 #  This sprite is used to display characters. It observes an instance of the
 # Game_Character class and automatically changes sprite state.
 #==============================================================================
 
 class Sprite_Character < Sprite_Base
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [Game_Characer] character
+  # Public Instance Variables
+  # @return [Game_Characer] character
   attr_accessor :character
-  #--------------------------------------------------------------------------
-  # * Object Initialization
+  # Object Initialization
   #     character : Game_Character
-  #--------------------------------------------------------------------------
   def initialize(viewport, character = nil)
     super(viewport)
     @character = character
     @balloon_duration = 0
     update
   end
-  #--------------------------------------------------------------------------
-  # * Free
-  #--------------------------------------------------------------------------
+
+  # Free
   def dispose
     end_animation
     end_balloon
     super
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     super
     update_bitmap
@@ -41,17 +34,15 @@ class Sprite_Character < Sprite_Base
     update_balloon
     setup_new_effect
   end
-  #--------------------------------------------------------------------------
-  # * Get Tileset Image That Includes the Designated Tile
-  #--------------------------------------------------------------------------
+
+  # Get Tileset Image That Includes the Designated Tile
   # @param [Integer] tile_id
   # @return [Bitmap]
   def tileset_bitmap(tile_id)
     Cache.tileset($game_map.tileset.tileset_names[5 + tile_id / 256])
   end
-  #--------------------------------------------------------------------------
-  # * Update Transfer Origin Bitmap
-  #--------------------------------------------------------------------------
+
+  # Update Transfer Origin Bitmap
   def update_bitmap
     if graphic_changed?
       @tile_id = @character.tile_id
@@ -64,17 +55,15 @@ class Sprite_Character < Sprite_Base
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Graphic Changed
-  #--------------------------------------------------------------------------
+
+  # Determine if Graphic Changed
   def graphic_changed?
     @tile_id != @character.tile_id ||
-    @character_name != @character.character_name ||
-    @character_index != @character.character_index
+        @character_name != @character.character_name ||
+        @character_index != @character.character_index
   end
-  #--------------------------------------------------------------------------
-  # * Set Tile Bitmap
-  #--------------------------------------------------------------------------
+
+  # Set Tile Bitmap
   def set_tile_bitmap
     sx = (@tile_id / 128 % 2 * 8 + @tile_id % 8) * 32;
     sy = @tile_id % 256 / 8 % 16 * 32;
@@ -83,9 +72,8 @@ class Sprite_Character < Sprite_Base
     self.ox = 16
     self.oy = 32
   end
-  #--------------------------------------------------------------------------
-  # * Set Character Bitmap
-  #--------------------------------------------------------------------------
+
+  # Set Character Bitmap
   def set_character_bitmap
     self.bitmap = Cache.character(@character_name)
     sign = @character_name[/^[\!\$]./]
@@ -99,9 +87,8 @@ class Sprite_Character < Sprite_Base
     self.ox = @cw / 2
     self.oy = @ch
   end
-  #--------------------------------------------------------------------------
-  # * Update Transfer Origin Rectangle
-  #--------------------------------------------------------------------------
+
+  # Update Transfer Origin Rectangle
   def update_src_rect
     if @tile_id == 0
       index = @character.character_index
@@ -111,27 +98,24 @@ class Sprite_Character < Sprite_Base
       self.src_rect.set(sx, sy, @cw, @ch)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Position
-  #--------------------------------------------------------------------------
+
+  # Update Position
   def update_position
     move_animation(@character.screen_x - x, @character.screen_y - y)
     self.x = @character.screen_x
     self.y = @character.screen_y
     self.z = @character.screen_z
   end
-  #--------------------------------------------------------------------------
-  # * Update Other
-  #--------------------------------------------------------------------------
+
+  # Update Other
   def update_other
     self.opacity = @character.opacity
     self.blend_type = @character.blend_type
     self.bush_depth = @character.bush_depth
     self.visible = !@character.transparent
   end
-  #--------------------------------------------------------------------------
-  # * Set New Effect
-  #--------------------------------------------------------------------------
+
+  # Set New Effect
   def setup_new_effect
     if !animation? && @character.animation_id > 0
       animation = $data_animations[@character.animation_id]
@@ -142,9 +126,8 @@ class Sprite_Character < Sprite_Base
       start_balloon
     end
   end
-  #--------------------------------------------------------------------------
-  # * Move Animation
-  #--------------------------------------------------------------------------
+
+  # Move Animation
   def move_animation(dx, dy)
     if @animation && @animation.position != 3
       @ani_ox += dx
@@ -155,16 +138,14 @@ class Sprite_Character < Sprite_Base
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * End Animation
-  #--------------------------------------------------------------------------
+
+  # End Animation
   def end_animation
     super
     @character.animation_id = 0
   end
-  #--------------------------------------------------------------------------
-  # * Start Balloon Icon Display
-  #--------------------------------------------------------------------------
+
+  # Start Balloon Icon Display
   def start_balloon
     dispose_balloon
     @balloon_duration = 8 * balloon_speed + balloon_wait
@@ -174,18 +155,16 @@ class Sprite_Character < Sprite_Base
     @balloon_sprite.oy = 32
     update_balloon
   end
-  #--------------------------------------------------------------------------
-  # * Free Balloon Icon
-  #--------------------------------------------------------------------------
+
+  # Free Balloon Icon
   def dispose_balloon
     if @balloon_sprite
       @balloon_sprite.dispose
       @balloon_sprite = nil
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Balloon Icon
-  #--------------------------------------------------------------------------
+
+  # Update Balloon Icon
   def update_balloon
     if @balloon_duration > 0
       @balloon_duration -= 1
@@ -201,31 +180,27 @@ class Sprite_Character < Sprite_Base
       end
     end
   end
-  #--------------------------------------------------------------------------
-  # * End Balloon Icon
-  #--------------------------------------------------------------------------
+
+  # End Balloon Icon
   def end_balloon
     dispose_balloon
     @character.balloon_id = 0
   end
-  #--------------------------------------------------------------------------
-  # * Balloon Icon Display Speed
+
+  # Balloon Icon Display Speed
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def balloon_speed
     return 8
   end
-  #--------------------------------------------------------------------------
-  # * Wait Time for Last Frame of Balloon
+
+  # Wait Time for Last Frame of Balloon
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def balloon_wait
     return 12
   end
-  #--------------------------------------------------------------------------
-  # * Frame Number of Balloon Icon
+
+  # Frame Number of Balloon Icon
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def balloon_frame_index
     return 7 - [(@balloon_duration - balloon_wait) / balloon_speed, 0].max
   end

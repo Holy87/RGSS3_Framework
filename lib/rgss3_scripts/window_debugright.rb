@@ -1,43 +1,35 @@
 #==============================================================================
 # ** Window_DebugRight
-#------------------------------------------------------------------------------
 #  This window displays switches and variables separately on the debug screen.
 #==============================================================================
 
 class Window_DebugRight < Window_Selectable
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [Symbol] mode
-  # @attr [Integer] top_id
-  attr_reader   :mode                     # Mode (:switch / :variable)
-  attr_reader   :top_id                   # ID shown on top
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #-------------------------------------------------------------------------
+  # Public Instance Variables
+  # @return [Symbol] mode
+  attr_reader :mode # Mode (:switch / :variable)
+  # @return [Integer] top_id
+  attr_reader :top_id # ID shown on top
+  # Object Initialization
   def initialize(x, y, width)
     super(x, y, width, fitting_height(10))
     @mode = :switch
     @top_id = 1
     refresh
   end
-  #--------------------------------------------------------------------------
-  # * Get Number of Items
+
+  # Get Number of Items
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def item_max
     return 10
   end
-  #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
+
+  # Refresh
   def refresh
     contents.clear
     draw_all_items
   end
-  #--------------------------------------------------------------------------
-  # * Draw Item
-  #--------------------------------------------------------------------------
+
+  # Draw Item
   def draw_item(index)
     data_id = @top_id + index
     id_text = sprintf("%04d:", data_id)
@@ -59,44 +51,39 @@ class Window_DebugRight < Window_Selectable
     rect.width += 60
     draw_text(rect, status, 2)
   end
-  #--------------------------------------------------------------------------
-  # * Set Mode
+
+  # Set Mode
   #     mode : New mode
-  #--------------------------------------------------------------------------
   def mode=(mode)
     if @mode != mode
       @mode = mode
       refresh
     end
   end
-  #--------------------------------------------------------------------------
-  # * Set ID Shown on Top
+
+  # Set ID Shown on Top
   #     id : new ID
-  #--------------------------------------------------------------------------
   def top_id=(id)
     if @top_id != id
       @top_id = id
       refresh
     end
   end
-  #--------------------------------------------------------------------------
-  # * Get Currently Selected ID
+
+  # Get Currently Selected ID
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def current_id
     top_id + index
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     super
-    update_switch_mode   if active && mode == :switch
+    update_switch_mode if active && mode == :switch
     update_variable_mode if active && mode == :variable
   end
-  #--------------------------------------------------------------------------
-  # * Update During Switch Mode
-  #--------------------------------------------------------------------------
+
+  # Update During Switch Mode
   def update_switch_mode
     if Input.trigger?(:C)
       Sound.play_ok
@@ -104,9 +91,8 @@ class Window_DebugRight < Window_Selectable
       redraw_current_item
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update During Variable Mode
-  #--------------------------------------------------------------------------
+
+  # Update During Variable Mode
   def update_variable_mode
     return unless $game_variables[current_id].is_a?(Numeric)
     value = $game_variables[current_id]

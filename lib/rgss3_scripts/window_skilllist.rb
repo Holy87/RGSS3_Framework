@@ -1,89 +1,75 @@
 #==============================================================================
 # ** Window_SkillList
-#------------------------------------------------------------------------------
 #  This window is for displaying a list of available skills on the skill window.
 #==============================================================================
 
 class Window_SkillList < Window_Selectable
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize(x, y, width, height)
     super
     @actor = nil
     @stype_id = 0
     @data = []
   end
-  #--------------------------------------------------------------------------
-  # * Set Actor
-  #--------------------------------------------------------------------------
+
+  # Set Actor
   def actor=(actor)
     return if @actor == actor
     @actor = actor
     refresh
     self.oy = 0
   end
-  #--------------------------------------------------------------------------
-  # * Set Skill Type ID
-  #--------------------------------------------------------------------------
+
+  # Set Skill Type ID
   def stype_id=(stype_id)
     return if @stype_id == stype_id
     @stype_id = stype_id
     refresh
     self.oy = 0
   end
-  #--------------------------------------------------------------------------
-  # * Get Digit Count
-  #--------------------------------------------------------------------------
+
+  # Get Digit Count
   def col_max
     return 2
   end
-  #--------------------------------------------------------------------------
-  # * Get Number of Items
-  #--------------------------------------------------------------------------
+
+  # Get Number of Items
   def item_max
     @data ? @data.size : 1
   end
-  #--------------------------------------------------------------------------
-  # * Get Skill
+
+  # Get Skill
   # @return [RPG::Skill]
-  #--------------------------------------------------------------------------
   def item
     @data && index >= 0 ? @data[index] : nil
   end
-  #--------------------------------------------------------------------------
-  # * Get Activation State of Selection Item
-  #--------------------------------------------------------------------------
+
+  # Get Activation State of Selection Item
   def current_item_enabled?
     enable?(@data[index])
   end
-  #--------------------------------------------------------------------------
-  # * Include in Skill List? 
-  #--------------------------------------------------------------------------
+
+  # Include in Skill List?
   def include?(item)
     item && item.stype_id == @stype_id
   end
-  #--------------------------------------------------------------------------
-  # * Display Skill in Active State?
-  #--------------------------------------------------------------------------
+
+  # Display Skill in Active State?
   def enable?(item)
     @actor && @actor.usable?(item)
   end
-  #--------------------------------------------------------------------------
-  # * Create Skill List
-  #--------------------------------------------------------------------------
+
+  # Create Skill List
   def make_item_list
-    @data = @actor ? @actor.skills.select {|skill| include?(skill) } : []
+    @data = @actor ? @actor.skills.select {|skill| include?(skill)} : []
   end
-  #--------------------------------------------------------------------------
-  # * Restore Previous Selection Position
-  #--------------------------------------------------------------------------
+
+  # Restore Previous Selection Position
   def select_last
     select(@data.index(@actor.last_skill.object) || 0)
   end
-  #--------------------------------------------------------------------------
-  # * Draw Item
-  #--------------------------------------------------------------------------
+
+  # Draw Item
   def draw_item(index)
     skill = @data[index]
     if skill
@@ -93,9 +79,8 @@ class Window_SkillList < Window_Selectable
       draw_skill_cost(rect, skill)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Draw Skill Use Cost
-  #--------------------------------------------------------------------------
+
+  # Draw Skill Use Cost
   def draw_skill_cost(rect, skill)
     if @actor.skill_tp_cost(skill) > 0
       change_color(tp_cost_color, enable?(skill))
@@ -105,15 +90,13 @@ class Window_SkillList < Window_Selectable
       draw_text(rect, @actor.skill_mp_cost(skill), 2)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Help Text
-  #--------------------------------------------------------------------------
+
+  # Update Help Text
   def update_help
     @help_window.set_item(item)
   end
-  #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
+
+  # Refresh
   def refresh
     make_item_list
     create_contents

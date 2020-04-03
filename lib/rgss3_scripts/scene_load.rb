@@ -1,26 +1,21 @@
 #==============================================================================
 # ** Scene_Load
-#------------------------------------------------------------------------------
 #  This class performs load screen processing. 
 #==============================================================================
 
 class Scene_Load < Scene_File
-  #--------------------------------------------------------------------------
-  # * Get Help Window Text
-  #--------------------------------------------------------------------------
+  # Get Help Window Text
   def help_window_text
     Vocab::LoadMessage
   end
-  #--------------------------------------------------------------------------
-  # * Get File Index to Select First
+
+  # Get File Index to Select First
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def first_savefile_index
     DataManager.latest_savefile_index
   end
-  #--------------------------------------------------------------------------
-  # * Confirm Save File
-  #--------------------------------------------------------------------------
+
+  # Confirm Save File
   def on_savefile_ok
     super
     if DataManager.load_game(@index)
@@ -29,9 +24,8 @@ class Scene_Load < Scene_File
       Sound.play_buzzer
     end
   end
-  #--------------------------------------------------------------------------
-  # * Processing When Load Is Successful
-  #--------------------------------------------------------------------------
+
+  # Processing When Load Is Successful
   def on_load_success
     Sound.play_load
     fadeout_all

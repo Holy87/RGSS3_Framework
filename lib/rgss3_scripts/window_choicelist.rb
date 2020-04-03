@@ -1,13 +1,10 @@
 #==============================================================================
 # ** Window_ChoiceList
-#------------------------------------------------------------------------------
 #  This window is used for the event command [Show Choices].
 #==============================================================================
 
 class Window_ChoiceList < Window_Command
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   # @param [Window_Message] message_window
   def initialize(message_window)
     @message_window = message_window
@@ -15,9 +12,8 @@ class Window_ChoiceList < Window_Command
     self.openness = 0
     deactivate
   end
-  #--------------------------------------------------------------------------
-  # * Start Input Processing
-  #--------------------------------------------------------------------------
+
+  # Start Input Processing
   def start
     update_placement
     refresh
@@ -25,9 +21,8 @@ class Window_ChoiceList < Window_Command
     open
     activate
   end
-  #--------------------------------------------------------------------------
-  # * Update Window Position
-  #--------------------------------------------------------------------------
+
+  # Update Window Position
   def update_placement
     self.width = [max_choice_width + 12, 96].max + padding * 2
     self.width = [width, Graphics.width].min
@@ -39,51 +34,44 @@ class Window_ChoiceList < Window_Command
       self.y = @message_window.y + @message_window.height
     end
   end
-  #--------------------------------------------------------------------------
-  # * Get Maximum Width of Choices
+
+  # Get Maximum Width of Choices
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def max_choice_width
-    $game_message.choices.collect {|s| text_size(s).width }.max
+    $game_message.choices.collect {|s| text_size(s).width}.max
   end
-  #--------------------------------------------------------------------------
-  # * Calculate Height of Window Contents
+
+  # Calculate Height of Window Contents
   # @return [Integer]
-  #--------------------------------------------------------------------------
   def contents_height
     item_max * item_height
   end
-  #--------------------------------------------------------------------------
-  # * Create Command List
-  #--------------------------------------------------------------------------
+
+  # Create Command List
   def make_command_list
     $game_message.choices.each do |choice|
       add_command(choice, :choice)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Draw Item
-  #--------------------------------------------------------------------------
+
+  # Draw Item
   def draw_item(index)
     rect = item_rect_for_text(index)
     draw_text_ex(rect.x, rect.y, command_name(index))
   end
-  #--------------------------------------------------------------------------
-  # * Get Activation State of Cancel Processing
-  #--------------------------------------------------------------------------
+
+  # Get Activation State of Cancel Processing
   def cancel_enabled?
     $game_message.choice_cancel_type > 0
   end
-  #--------------------------------------------------------------------------
-  # * Call OK Handler
-  #--------------------------------------------------------------------------
+
+  # Call OK Handler
   def call_ok_handler
     $game_message.choice_proc.call(index)
     close
   end
-  #--------------------------------------------------------------------------
-  # * Call Cancel Handler
-  #--------------------------------------------------------------------------
+
+  # Call Cancel Handler
   def call_cancel_handler
     $game_message.choice_proc.call($game_message.choice_cancel_type - 1)
     close

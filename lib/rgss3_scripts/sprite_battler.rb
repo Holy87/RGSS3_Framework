@@ -1,19 +1,14 @@
 #==============================================================================
 # ** Sprite_Battler
-#------------------------------------------------------------------------------
 #  This sprite is used to display battlers. It observes an instance of the
 # Game_Battler class and automatically changes sprite states.
 #==============================================================================
 
 class Sprite_Battler < Sprite_Base
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  # @attr [Game_Battler] battler
+  # Public Instance Variables
+  # @return [Game_Battler] battler
   attr_accessor :battler
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
+  # Object Initialization
   def initialize(viewport, battler = nil)
     super(viewport)
     @battler = battler
@@ -21,16 +16,14 @@ class Sprite_Battler < Sprite_Base
     @effect_type = nil
     @effect_duration = 0
   end
-  #--------------------------------------------------------------------------
-  # * Free
-  #--------------------------------------------------------------------------
+
+  # Free
   def dispose
     bitmap.dispose if bitmap
     super
   end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
+
+  # Frame Update
   def update
     super
     if @battler
@@ -48,9 +41,8 @@ class Sprite_Battler < Sprite_Base
       @effect_type = nil
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Transfer Origin Bitmap
-  #--------------------------------------------------------------------------
+
+  # Update Transfer Origin Bitmap
   def update_bitmap
     new_bitmap = Cache.battler(@battler.battler_name, @battler.battler_hue)
     if bitmap != new_bitmap
@@ -58,33 +50,29 @@ class Sprite_Battler < Sprite_Base
       init_visibility
     end
   end
-  #--------------------------------------------------------------------------
-  # * Initialize Visibility
-  #--------------------------------------------------------------------------
+
+  # Initialize Visibility
   def init_visibility
     @battler_visible = @battler.alive?
     self.opacity = 0 unless @battler_visible
   end
-  #--------------------------------------------------------------------------
-  # * Update Origin
-  #--------------------------------------------------------------------------
+
+  # Update Origin
   def update_origin
     if bitmap
       self.ox = bitmap.width / 2
       self.oy = bitmap.height
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update Position
-  #--------------------------------------------------------------------------
+
+  # Update Position
   def update_position
     self.x = @battler.screen_x
     self.y = @battler.screen_y
     self.z = @battler.screen_z
   end
-  #--------------------------------------------------------------------------
-  # * Set New Effect
-  #--------------------------------------------------------------------------
+
+  # Set New Effect
   def setup_new_effect
     if !@battler_visible && @battler.alive?
       start_effect(:appear)
@@ -96,9 +84,8 @@ class Sprite_Battler < Sprite_Base
       @battler.sprite_effect_type = nil
     end
   end
-  #--------------------------------------------------------------------------
-  # * Start Effect
-  #--------------------------------------------------------------------------
+
+  # Start Effect
   def start_effect(effect_type)
     @effect_type = effect_type
     case @effect_type
@@ -126,9 +113,8 @@ class Sprite_Battler < Sprite_Base
     end
     revert_to_normal
   end
-  #--------------------------------------------------------------------------
-  # * Revert to Normal Settings
-  #--------------------------------------------------------------------------
+
+  # Revert to Normal Settings
   def revert_to_normal
     self.blend_type = 0
     self.color.set(0, 0, 0, 0)
@@ -136,9 +122,8 @@ class Sprite_Battler < Sprite_Base
     self.ox = bitmap.width / 2 if bitmap
     self.src_rect.y = 0
   end
-  #--------------------------------------------------------------------------
-  # * Set New Animation
-  #--------------------------------------------------------------------------
+
+  # Set New Animation
   def setup_new_animation
     if @battler.animation_id > 0
       animation = $data_animations[@battler.animation_id]
@@ -147,15 +132,13 @@ class Sprite_Battler < Sprite_Base
       @battler.animation_id = 0
     end
   end
-  #--------------------------------------------------------------------------
-  # * Determine if Effect Is Executing
-  #--------------------------------------------------------------------------
+
+  # Determine if Effect Is Executing
   def effect?
     @effect_type != nil
   end
-  #--------------------------------------------------------------------------
-  # * Update Effect
-  #--------------------------------------------------------------------------
+
+  # Update Effect
   def update_effect
     if @effect_duration > 0
       @effect_duration -= 1
@@ -178,42 +161,36 @@ class Sprite_Battler < Sprite_Base
       @effect_type = nil if @effect_duration == 0
     end
   end
-  #--------------------------------------------------------------------------
-  # * Update White Flash Effect
-  #--------------------------------------------------------------------------
+
+  # Update White Flash Effect
   def update_whiten
     self.color.set(255, 255, 255, 0)
     self.color.alpha = 128 - (16 - @effect_duration) * 10
   end
-  #--------------------------------------------------------------------------
-  # * Update Blink Effect
-  #--------------------------------------------------------------------------
+
+  # Update Blink Effect
   def update_blink
     self.opacity = (@effect_duration % 10 < 5) ? 255 : 0
   end
-  #--------------------------------------------------------------------------
-  # * Update Appearance Effect
-  #--------------------------------------------------------------------------
+
+  # Update Appearance Effect
   def update_appear
     self.opacity = (16 - @effect_duration) * 16
   end
-  #--------------------------------------------------------------------------
-  # * Updated Disappear Effect
-  #--------------------------------------------------------------------------
+
+  # Updated Disappear Effect
   def update_disappear
     self.opacity = 256 - (32 - @effect_duration) * 10
   end
-  #--------------------------------------------------------------------------
-  # * Update Collapse Effect
-  #--------------------------------------------------------------------------
+
+  # Update Collapse Effect
   def update_collapse
     self.blend_type = 1
     self.color.set(255, 128, 128, 128)
     self.opacity = 256 - (48 - @effect_duration) * 6
   end
-  #--------------------------------------------------------------------------
-  # * Update Boss Collapse Effect
-  #--------------------------------------------------------------------------
+
+  # Update Boss Collapse Effect
   def update_boss_collapse
     alpha = @effect_duration * 120 / bitmap.height
     self.ox = bitmap.width / 2 + @effect_duration % 2 * 4 - 2
@@ -223,9 +200,8 @@ class Sprite_Battler < Sprite_Base
     self.src_rect.y -= 1
     Sound.play_boss_collapse2 if @effect_duration % 20 == 19
   end
-  #--------------------------------------------------------------------------
-  # * Update Instant Collapse Effect
-  #--------------------------------------------------------------------------
+
+  # Update Instant Collapse Effect
   def update_instant_collapse
     self.opacity = 0
   end
